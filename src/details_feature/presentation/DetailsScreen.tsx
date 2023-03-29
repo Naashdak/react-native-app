@@ -1,13 +1,19 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../core/presentation/RootStackParamList";
-import {Text, View} from 'react-native'
+import React from "react";
+import { Text, View } from "react-native";
+import { RootStackParamList } from "../../core/presentation/RootStackParamList"
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Details'>
 
-export function DetailsScreen({navigation}: Props){
-    return(
-        <View style={{justifyContent: 'center'}}>
-            <Text>Details Screen</Text>
-        </View>
-    )
+export function DetailsScreen({ route }: Props) {
+  /* 2. Get the param */
+  const { course } = route.params;
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Details Screen</Text>
+      <Text>itemId: {course.id.toString()}</Text>
+      <Text>title: {course.title}</Text>
+      <Text>description: {course.description}</Text>
+    </View>
+  );
 }

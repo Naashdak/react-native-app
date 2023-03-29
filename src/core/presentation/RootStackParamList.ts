@@ -1,5 +1,7 @@
+import { Course } from "../domain/model/Course";
+
 export type RootStackParamList = {
     Home: undefined;
     Login: undefined;
-    Details: undefined;
+    Details: {course: Course};
 }
