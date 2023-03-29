@@ -7,11 +7,18 @@ import { RootStackParamList } from "./RootStackParamList";
 
 export function Navigation(){
     const Stack = createNativeStackNavigator<RootStackParamList>();
-    <NavigationContainer>
-        <Stack.Navigator>
-            <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Details" component={DetailsScreen} />
-        </Stack.Navigator>
-    </NavigationContainer>
+    return(
+        <NavigationContainer>
+            <Stack.Navigator>
+                <Stack.Screen name="Home" component={HomeScreen} />
+                <Stack.Screen name="Login" component={LoginScreen} />
+                <Stack.Screen 
+                    name="Details" 
+                    component={DetailsScreen} 
+                    initialParams={{}} 
+          />
+            </Stack.Navigator>
+        </NavigationContainer>
+    )
+    
 }
