@@ -6,8 +6,8 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Login'>
 
 export function LoginScreen({navigation}: Props){
     return(
-        <View style={{justifyContent: 'center'}}>
-            <Text>Login Screen</Text>
+        <View style={{justifyContent: 'center', height: '100%'}}>
+            <Text style={{textAlign: 'center'}}>Login Screen</Text>
         </View>
     )
 }
