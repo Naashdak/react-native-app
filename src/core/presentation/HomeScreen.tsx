@@ -8,10 +8,10 @@ import { StackNavigatorParamList } from "../navigation/StackNavigatorParamList";
 
 type Props = NativeStackScreenProps<StackNavigatorParamList, 'Home'>
 
-export function HomeScreen({navigation}: Props){
+function HomeScreen({navigation, route}: Props){
     const [courses, setCourses] = useState<Course[]>([])
 
-    const navigateToDetailsScreen = (course: Course) => {
+    const navigateToDetailsScreen = (course: Course): void => {
         navigation.navigate(
             "Details", 
             {course}
@@ -37,8 +37,11 @@ export function HomeScreen({navigation}: Props){
     return(
         <ScrollView style={styles.box}>
             {courses.map((course: Course) => (
-                CourseCard(course, {navigateToDetailsScreen})
+                <CourseCard 
+                    course={course} 
+                    navigateToDetailsScreen={navigateToDetailsScreen} />
             ))}
         </ScrollView>
     )
 }
+export default HomeScreen;

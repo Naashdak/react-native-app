@@ -1,16 +1,13 @@
-import { useRoute } from '@react-navigation/native';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import { Image, StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
 import { Course } from '../../domain/model/Course';
-import { RootStackParamList } from '../../navigation/RootStackParamList';
-import { HomeScreenNavigationProp, StackNavigatorParamList } from '../../navigation/StackNavigatorParamList';
 
-type Props = NativeStackScreenProps<StackNavigatorParamList, 'Details'>
-type DetailsScreenNavigationProp = Props['navigation'];
+type Props = {
+    course: Course
+    navigateToDetailsScreen(course:Course):void;
+}
 
-export function CourseCard(course: Course, {navigateToDetailsScreen}){
+const CourseCard: FunctionComponent<Props> = (props) => {
     const styles = StyleSheet.create({
         container: {
             margin:10,
@@ -39,21 +36,20 @@ export function CourseCard(course: Course, {navigateToDetailsScreen}){
         <View style={styles.container}>
             <TouchableNativeFeedback
                     onPress={() =>
-                        {navigateToDetailsScreen(course)}
+                        props.navigateToDetailsScreen(props.course)
                     }>
                 <View>
                     <Image
                         style={styles.image}
-                        source={{uri: course.imageSrc.toString()}}
+                        source={{uri: props.course.imageSrc.toString()}}
                     />
                     <View style={styles.informations}>
-                        <Text>{course.title}</Text>
-                        <Text>Description : {course.description}</Text>
+                        <Text>{props.course.title}</Text>
+                        <Text>Description : {props.course.description}</Text>
                     </View>
                 </View>
             </TouchableNativeFeedback>
         </View>
-        
     )
 }
 export default CourseCard;
