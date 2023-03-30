@@ -1,13 +1,16 @@
+import { useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
 import { Course } from '../../domain/model/Course';
-import { RootStackParamList } from '../RootStackParamList';
+import { RootStackParamList } from '../../navigation/RootStackParamList';
+import { HomeScreenNavigationProp, StackNavigatorParamList } from '../../navigation/StackNavigatorParamList';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Details'>
-type ProfileScreenNavigationProp = Props['navigation'];
+type Props = NativeStackScreenProps<StackNavigatorParamList, 'Details'>
+type DetailsScreenNavigationProp = Props['navigation'];
 
-const CourseCard = (course: Course, navigation: ProfileScreenNavigationProp) => {
+export function CourseCard(course: Course, {navigateToDetailsScreen}){
     const styles = StyleSheet.create({
         container: {
             margin:10,
@@ -33,12 +36,10 @@ const CourseCard = (course: Course, navigation: ProfileScreenNavigationProp) => 
         }
     })
     return (
-        <View key={course.id.toString()} style={styles.container}>
+        <View style={styles.container}>
             <TouchableNativeFeedback
                     onPress={() =>
-                        navigation.push('Details', {
-                        course: course
-                        })
+                        {navigateToDetailsScreen(course)}
                     }>
                 <View>
                     <Image

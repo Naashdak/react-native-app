@@ -1,6 +1,6 @@
 export type Course = {
-    id: Number
-    title: String
-    description: String,
-    imageSrc: String
+    id: number
+    title: string
+    description: string,
+    imageSrc: string
 }

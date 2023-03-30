@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../core/presentation/RootStackParamList";
 import {Text, View} from 'react-native'
+import { RootStackParamList } from "../../core/navigation/RootStackParamList";
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>
 
