@@ -1,10 +1,11 @@
 import React, { FunctionComponent } from 'react';
 import { Image, StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
 import { Course } from '../../domain/model/Course';
+import { User } from '../../domain/model/User';
 
 type Props = {
-    course: Course
-    navigateToDetailsScreen(course:Course):void;
+    user: User
+    navigateToDetailsScreen(user:User):void;
 }
 
 const CourseCard: FunctionComponent<Props> = (props) => {
@@ -36,16 +37,16 @@ const CourseCard: FunctionComponent<Props> = (props) => {
         <View style={styles.container}>
             <TouchableNativeFeedback
                     onPress={() =>
-                        props.navigateToDetailsScreen(props.course)
+                        props.navigateToDetailsScreen(props.user)
                     }>
                 <View>
-                    <Image
+                    {/* <Image
                         style={styles.image}
-                        source={{uri: props.course.imageSrc.toString()}}
-                    />
+                        source={{uri: props.user.imageSrc.toString()}}
+                    /> */}
                     <View style={styles.informations}>
-                        <Text>{props.course.title}</Text>
-                        <Text>Description : {props.course.description}</Text>
+                        <Text>{props.user.username}</Text>
+                        <Text>Description : {props.user.userSkills[0].personnalNote}</Text>
                     </View>
                 </View>
             </TouchableNativeFeedback>
