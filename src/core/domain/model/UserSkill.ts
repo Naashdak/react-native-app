@@ -1,10 +1,10 @@
+import { Skill } from "./Skill";
+
 export type UserSkill = {
     id: number;
     personnalNote: string;
     skillLevel: SkillLevel;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
+    skill: Skill;
 }
 
 export enum SkillLevel{

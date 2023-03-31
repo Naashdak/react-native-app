@@ -1,11 +1,12 @@
 import React, { FunctionComponent } from 'react';
-import { Image, StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
-import { Course } from '../../domain/model/Course';
-import { User } from '../../domain/model/User';
+import { StyleSheet, Text, TouchableNativeFeedback, View} from 'react-native';
+import { UserSkill } from '../../domain/model/UserSkill';
+import { UserWithSkillsDTO } from '../../domain/model/UserWithSkillsDTO';
 
 type Props = {
-    user: User
-    navigateToDetailsScreen(user:User):void;
+    user: UserWithSkillsDTO
+    userSkill: UserSkill
+    navigateToDetailsScreen(user:UserWithSkillsDTO, userSkill: UserSkill):void;
 }
 
 const CourseCard: FunctionComponent<Props> = (props) => {
@@ -37,7 +38,7 @@ const CourseCard: FunctionComponent<Props> = (props) => {
         <View style={styles.container}>
             <TouchableNativeFeedback
                     onPress={() =>
-                        props.navigateToDetailsScreen(props.user)
+                        props.navigateToDetailsScreen(props.user, props.userSkill)
                     }>
                 <View>
                     {/* <Image
@@ -45,8 +46,10 @@ const CourseCard: FunctionComponent<Props> = (props) => {
                         source={{uri: props.user.imageSrc.toString()}}
                     /> */}
                     <View style={styles.informations}>
-                        <Text>{props.user.username}</Text>
-                        <Text>Description : {props.user.userSkills[0].personnalNote}</Text>
+                        <Text>Pseudo : {props.user.username}</Text>
+                        <Text>Ville : {props.user.city.cityName} {props.user.city.zipCode}</Text>
+                        <Text>Compétence : {props.userSkill.skill.skillName}</Text>
+                        <Text>Niveau : {props.userSkill.skillLevel}</Text>
                     </View>
                 </View>
             </TouchableNativeFeedback>

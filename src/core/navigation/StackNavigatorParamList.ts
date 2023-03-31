@@ -1,12 +1,12 @@
 import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Course } from "../domain/model/Course";
-import { User } from "../domain/model/User";
+import { UserSkill } from "../domain/model/UserSkill";
+import { UserWithSkillsDTO } from "../domain/model/UserWithSkillsDTO";
 
 export type StackNavigatorParamList = {
   Home: undefined;
   Login: undefined;
-  Details: {user: User};
+  Details: {user: UserWithSkillsDTO, userSkill: UserSkill};
   Account: {userName: string};
 };
 
