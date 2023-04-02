@@ -1,9 +1,12 @@
+import React from "react";
 import RootNavigator from "./src/core/navigation/RootNavigator";
+import container, { ContainerContext } from "./src/core/di/Inversify.config";
 
-function App() {
+export default function App() {
+
   return (
-    <RootNavigator />
+    <ContainerContext.Provider value={container}>
+      <RootNavigator />
+    </ContainerContext.Provider>
   );
 }
-
-export default App;
