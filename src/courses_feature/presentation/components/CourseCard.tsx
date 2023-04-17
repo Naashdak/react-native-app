@@ -8,25 +8,6 @@ type Props = {
 }
 
 const CourseCard: FunctionComponent<Props> = (props) => {
-    // const styles = StyleSheet.create({
-    //     container: {
-    //         margin:10,
-    //         flex: 1,
-    //         shadowColor: "#000",
-    //         shadowOffset: {
-    //             width: 0,
-    //             height: 1,
-    //         },
-    //         shadowOpacity: 0.22,
-    //         shadowRadius: 2.22,
-    //         elevation: 3,
-    //     },
-
-    //     informations: {
-    //         flex: 1,
-    //         flexDirection: 'column'
-    //     }
-    // })
     return (
         <View style={styles.card}>
             <TouchableNativeFeedback
@@ -34,10 +15,6 @@ const CourseCard: FunctionComponent<Props> = (props) => {
                         props.navigateToDetailsScreen(props.course)
                     }>
                 <View>
-                    {/* <Image
-                        style={styles.image}
-                        source={{uri: props.user.imageSrc.toString()}}
-                    /> */}
                     <View>
                         <Text>Pseudo : {props.course.user.username}</Text>
                         <Text>Ville : {props.course.user.city.cityName} {props.course.user.city.zipCode}</Text>
