@@ -1,21 +1,8 @@
-import { RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { UserSkill } from "../domain/model/UserSkill";
-import { UserWithSkillsDTO } from "../domain/model/UserWithSkillsDTO";
+import { UserSkillsWithUserAndCityDTO } from "../../courses_feature/domain/model/UserSkillsWithUserAndCityDTO";
 
 export type StackNavigatorParamList = {
-  Home: undefined;
   Login: undefined;
-  Details: {user: UserWithSkillsDTO, userSkill: UserSkill};
+  Details: {course: UserSkillsWithUserAndCityDTO};
   Account: {userName: string};
+  Courses: undefined;
 };
-
-export type HomeScreenNavigationProp = NativeStackNavigationProp<
-  StackNavigatorParamList,
-  'Details'
->;
-
-export type DetailsScreenRouteProp = RouteProp<
-  StackNavigatorParamList,
-  'Details'
->;
