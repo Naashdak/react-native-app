@@ -1,8 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { Text, View } from "react-native";
-import { UserSkill } from "../../core/domain/model/UserSkill";
-import { UserWithSkillsDTO } from "../../core/domain/model/UserWithSkillsDTO";
 import { StackNavigatorParamList } from "../../core/navigation/StackNavigatorParamList";
 import { UserSkillsWithUserAndCityDTO } from "../../courses_feature/domain/model/UserSkillsWithUserAndCityDTO";
 
