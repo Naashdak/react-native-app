@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackNavigatorParamList } from "../../core/navigation/StackNavigatorParamList";
 import { useEffect, useState } from "react";
-import { RefreshControl, SafeAreaView , ScrollView, Text } from "react-native";
+import { RefreshControl, SafeAreaView , ScrollView, Text, View } from "react-native";
 import CourseCard from "./components/CourseCard";
 import containter from "../../core/di/Inversify.config";
 import { ICourseService } from "../domain/ICourseService";
@@ -13,10 +13,12 @@ import { UserSkillsWithUserAndCityDTO } from "../domain/model/UserSkillsWithUser
 type Props = NativeStackScreenProps<StackNavigatorParamList, 'Courses'>
 
 export function CoursesScreen({navigation, route}: Props){
+    
     const courseService = containter.get<ICourseService>(SERVICE_IDENTIFIER.COURSESERVICE);
     const [courses, setCourses] = useState<UserSkillsWithUserAndCityDTO[]>();
     const [loading, setLoading] = useState<boolean>(false);
     const [refreshing, setRefreshing] = useState<boolean>(false);
+    const [error, setError] = useState<string>("")
     const navigateToDetailsScreen = (course: UserSkillsWithUserAndCityDTO): void => {
         navigation.navigate(
             "Details", 
@@ -36,20 +38,30 @@ export function CoursesScreen({navigation, route}: Props){
             try {
                 setLoading(true);
                 const result = await courseService.getCourses();
-                setCourses(result)
+                if(!result.ok){
+                    setError(result.statusText)
+                }
+
+                const json = await result.json();
+                if(json.data.length == 0){
+                    setError("Aucun cours à proximité ...")
+                } else {
+                    setCourses(json.data)
+                }
+                
             } catch (error: any) {
-                throw new Error(error.message);
+                setError(error.message)
             } finally {
                 setLoading(false);
             }
         }
         fetchData()
     }, [])
-
     return(
         <SafeAreaView>
             <Text>Près de chez moi</Text>
             <Loader isLoading={loading}/>
+            {error != "" ?? <Text>erreur</Text>}
             <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
                 {courses?.map((course: UserSkillsWithUserAndCityDTO, index: number) => (
                     <CourseCard 
