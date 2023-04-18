@@ -111,6 +111,7 @@ export function CoursesScreen({navigation, route}: Props){
                 <Text style={styles.sliderText}>Rayon : {labelRadius}km</Text>
                 <Slider
                     style={styles.sliderContent}
+                    value={radius}
                     minimumValue={1}
                     maximumValue={50}
                     minimumTrackTintColor="#FFFFFF"
