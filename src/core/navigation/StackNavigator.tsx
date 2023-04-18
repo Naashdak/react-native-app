@@ -10,9 +10,25 @@ const HomeStack = createNativeStackNavigator<StackNavigatorParamList>();
 const StackNavigator = () => {
   return (
     <HomeStack.Navigator>
-      <HomeStack.Screen name="Courses" component={CoursesScreen} />
-      <HomeStack.Screen name="Details" component={DetailsScreen} initialParams={{}} />
-      <HomeStack.Screen name="Login" component={LoginScreen} />
+      <HomeStack.Screen
+        name="Courses" 
+        component={CoursesScreen} 
+        options={{
+          title : "Près de chez moi"
+        }}
+      />
+      <HomeStack.Screen 
+        name="Details" 
+        component={DetailsScreen} 
+        initialParams={{}} 
+      />
+      <HomeStack.Screen 
+        name="Login" 
+        component={LoginScreen} 
+        options={{
+          title: "Connexion"
+        }}
+      />
       {/* <HomeStack.Screen name="Account" component={} /> */}
     </HomeStack.Navigator>
   );
