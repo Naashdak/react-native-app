@@ -9,10 +9,10 @@ import { ICourseService } from "../../courses_feature/domain/ICourseService";
 import { IGeolocationService } from "../domain/IGeolocationService";
 import { GeolocationService } from "../data/api/GeolocationService";
 
-let containter = new Container();
+let container = new Container();
 
-containter.bind<ICourseService>(SERVICE_IDENTIFIER.COURSESERVICE).to(CourseService)
-containter.bind<IGeolocationService>(SERVICE_IDENTIFIER.GEOLOCATIONSERVICE).to(GeolocationService)
+container.bind<ICourseService>(SERVICE_IDENTIFIER.COURSESERVICE).to(CourseService)
+container.bind<IGeolocationService>(SERVICE_IDENTIFIER.GEOLOCATIONSERVICE).to(GeolocationService)
 
-export const ContainerContext = createContext(containter);
-export default containter;
+const ContainerContext = createContext(container);
+export {container, ContainerContext};

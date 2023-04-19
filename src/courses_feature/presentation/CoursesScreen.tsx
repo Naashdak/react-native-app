@@ -2,12 +2,11 @@ import 'react-native-gesture-handler';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackNavigatorParamList } from "../../core/navigation/StackNavigatorParamList";
 import { useEffect, useState } from "react";
-import { RefreshControl, SafeAreaView , ScrollView, Text, View, StyleSheet, FlatList } from "react-native";
+import { SafeAreaView , Text, View, StyleSheet, FlatList } from "react-native";
 import CourseCard from "./components/CourseCard";
-import containter from "../../core/di/Inversify.config";
+import {container} from "../../core/di/Inversify.config";
 import { ICourseService } from "../domain/ICourseService";
 import SERVICE_IDENTIFIER from "../../core/di/inversify.identifiers";
-import Loader from "../../core/presentation/components/Loader";
 import React from "react";
 import { UserSkillsWithUserAndCityDTO } from "../domain/model/UserSkillsWithUserAndCityDTO";
 import * as Location from 'expo-location';
@@ -18,8 +17,8 @@ type Props = NativeStackScreenProps<StackNavigatorParamList, 'Courses'>
 
 export function CoursesScreen({navigation, route}: Props){
     
-    const courseService = containter.get<ICourseService>(SERVICE_IDENTIFIER.COURSESERVICE);
-    const geolocationService = containter.get<IGeolocationService>(SERVICE_IDENTIFIER.GEOLOCATIONSERVICE);
+    const courseService = container.get<ICourseService>(SERVICE_IDENTIFIER.COURSESERVICE);
+    const geolocationService = container.get<IGeolocationService>(SERVICE_IDENTIFIER.GEOLOCATIONSERVICE);
 
     const [courses, setCourses] = useState<UserSkillsWithUserAndCityDTO[]>();
     const [loading, setLoading] = useState<boolean>(false);
@@ -38,13 +37,30 @@ export function CoursesScreen({navigation, route}: Props){
     const [radius, setRadius] = useState<number>()
     const [labelRadius, setLabelRadius] = useState<number>(10)
 
-    const [refreshing, setRefreshing] = useState<boolean>(false);
     const onRefresh = React.useCallback(() => {
-        setRefreshing(true);
-        setTimeout(() => {
-          setRefreshing(false);
-        }, 2000);
+        fetchData()
       }, []);
+
+    const fetchData = async() => {
+        try {
+            setLoading(true);
+            const response = await courseService.getCourses(cities!);
+            if(!response.ok){
+                setError(response.statusText)
+            }
+
+            const json = await response.json();
+            if(json.data.length == 0){
+                setError("Aucun cours à proximité ...")
+            } else {
+                setCourses(json.data)
+            }
+        } catch (error: any) {
+            setError(error.message)
+        } finally {
+            setLoading(false);
+        }
+    }
 
     // Get geolocation
     useEffect(() => {
@@ -82,26 +98,6 @@ export function CoursesScreen({navigation, route}: Props){
     }, [radius])
 
     useEffect(() => {
-        const fetchData = async() => {
-            try {
-                setLoading(true);
-                const response = await courseService.getCourses(cities!);
-                if(!response.ok){
-                    setError(response.statusText)
-                }
-
-                const json = await response.json();
-                if(json.data.length == 0){
-                    setError("Aucun cours à proximité ...")
-                } else {
-                    setCourses(json.data)
-                }
-            } catch (error: any) {
-                setError(error.message)
-            } finally {
-                setLoading(false);
-            }
-        }
         fetchData()
     }, [cities])
 
@@ -129,15 +125,19 @@ export function CoursesScreen({navigation, route}: Props){
             <FlatList style={styles.list}
                 data={courses}
                 renderItem={(item) => (
-                    <CourseCard key={item.index} course={item.item} navigateToDetailsScreen={navigateToDetailsScreen}/>
+                    <CourseCard 
+                        key={item.index} 
+                        course={item.item} 
+                        navigateToDetailsScreen={navigateToDetailsScreen}/>
                 )}
-                refreshing={refreshing}
+                refreshing={loading}
                 onRefresh={onRefresh}
             />
-            <Loader isLoading={loading}/>
+            {/* <Loader isLoading={loading}/> */}
         </SafeAreaView>
     )
 }
+
 
 const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371; // Earth radius in kilometers
