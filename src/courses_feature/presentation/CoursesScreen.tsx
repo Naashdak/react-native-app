@@ -121,19 +121,6 @@ export function CoursesScreen({navigation, route}: Props){
                 ))}
                 
             </ScrollView>
-            
-            {/* <FlatList style={styles.list}
-                data={courses}
-                renderItem={(item) => (
-                    <CourseCard 
-                        key={item.index} 
-                        course={item.item} 
-                        navigateToDetailsScreen={navigateToDetailsScreen}/>
-                )}
-                refreshing={loading}
-                onRefresh={onRefresh}
-            /> */}
-            
         </SafeAreaView>
     )
 }
