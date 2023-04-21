@@ -72,6 +72,9 @@ export function CoursesScreen({navigation, route}: Props){
     }, []);
 
     useEffect(() => {
+        if(!radius){
+            return
+        }
         const getNearbyCities = async() => {
             try {
                 const nearbyCities = await cityService
@@ -112,7 +115,7 @@ export function CoursesScreen({navigation, route}: Props){
                     step={1}
                 />
             </View>
-            <ScrollView
+            <ScrollView style={styles.list}
                 refreshControl={
                     <RefreshControl refreshing={loading} onRefresh={onRefresh} />
                 }>
