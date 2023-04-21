@@ -5,15 +5,15 @@ import { Container } from "inversify"
 import SERVICE_IDENTIFIER from "./inversify.identifiers";
 import { createContext } from "react";
 import { ICourseService } from "../../courses_feature/domain/ICourseService";
-import { ICityService } from "../domain/ICityService";
 import { CityService } from "../domain/services/CityService";
 import { CourseService } from "../domain/services/CourseService";
 import { IApiService } from "../domain/interfaces/IApiService";
 import { StrapiApiService } from "../data/api/StrapiApiService";
-import { IGeolocationApiService } from "../domain/IGeolocationApiService";
-import { IGeolocationService } from "../domain/IGeolocationService";
 import { GeolocationApiService } from "../data/api/GeolocationApiService";
 import { GeolocationService } from "../domain/services/GeolocationService";
+import { ICityService } from "../domain/interfaces/ICityService";
+import { IGeolocationApiService } from "../domain/interfaces/IGeolocationApiService";
+import { IGeolocationService } from "../domain/interfaces/IGeolocationService";
 
 let container = new Container();
 
