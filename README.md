@@ -18,8 +18,9 @@ npm install
 ```
 
 Il faut ensuite créer un fichier .env, ajouter les variables d'environnement et leurs valeurs associées : 
-    - OPENWEATHERMAP_APIKEY={API_KEY}
-    - STRAPI_BEARER_TOKEN={BEARER_TOKEN}
+
+  - OPENWEATHERMAP_APIKEY={API_KEY}
+  - STRAPI_BEARER_TOKEN={BEARER_TOKEN}
 
 Pour lancer le projet : 
 ```bash
@@ -30,15 +31,16 @@ Vous pouvez scanner le QRCode avec l'application ExpoGo préalablement télécha
 
 ## Architecture
 
-Le project est organisé par fonctionnalités et chacune peu comporter différents dossiers :
-    feature: fonctionnalité
+    Le project est organisé par fonctionnalités et chacune peu comporter différents dossiers
+
+    feature: 
     |___ domain: logique métier
-    |   |___ model: Type/Interface liés à la fonctionnalité
-    |   |___ use-case: Cas d'usage de la fonctionnalité permettant de tester la fonction
+    |    |___ model: Type/Interface liés à la fonctionnalité
+    |    |___ use-case: Cas d'usage de la fonctionnalité permettant de tester la fonction
     |
     |___ presentation: Interface utilisateur, composants et state
-        |___ components: Composants React-Native de la fonctionnalité
-        |___ FeatureScreen.tsx: Ecran de la fonctionnalité
+         |___ components: Composants React-Native de la fonctionnalité
+         |___ FeatureScreen.tsx: Ecran de la fonctionnalité
 
 
     Cas spécifique du dossier core qui gèrent les besoins en communs de l'application et les éléments qui peuvent être réutiliser par plusieurs fonctionnalités

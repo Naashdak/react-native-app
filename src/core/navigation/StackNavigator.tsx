@@ -16,6 +16,7 @@ const StackNavigator = () => {
         options={{
           title : "Près de chez moi"
         }}
+        
       />
       <HomeStack.Screen 
         name="Details" 

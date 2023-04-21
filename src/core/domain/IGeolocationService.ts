@@ -1,5 +1,5 @@
+import { City } from "./model/City";
 
 export interface IGeolocationService {
-    getCityByCoordinates(lat: number, lon: number): Promise<Response>
-    getNearbyCities(lat: number, lon: number): Promise<Response>
+    getCityByCoordinates(lat: number, lon:number): City
 }
