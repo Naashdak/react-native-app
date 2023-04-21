@@ -9,21 +9,18 @@ type Props = {
 
 const CourseCard: FunctionComponent<Props> = (props) => {
     return (
-        <View style={styles.card}>
-            <TouchableNativeFeedback
-                    onPress={() =>
-                        props.navigateToDetailsScreen(props.course)
-                    }>
-                <View>
-                    <View>
-                        <Text>Pseudo : {props.course.user.username}</Text>
-                        <Text>Ville : {props.course.user.city.cityName} {props.course.user.city.zipCode}</Text>
-                        <Text>Compétence : {props.course.skill.skillName}</Text>
-                        <Text>Niveau : {props.course.skillLevel}</Text>
-                    </View>
-                </View>
-            </TouchableNativeFeedback>
-        </View>
+        <TouchableNativeFeedback
+            onPress={() =>
+            props.navigateToDetailsScreen(props.course)}
+        >
+            <View style={styles.card}>
+                <Text>Pseudo : {props.course.user?.username}</Text>
+                <Text>Ville : {props.course.user?.city.cityName} {props.course.user?.city.zipCode}</Text>
+                <Text>Compétence : {props.course.skill.skillName}</Text>
+                <Text>Niveau : {props.course.skillLevel}</Text>
+            </View>
+        </TouchableNativeFeedback>
+
     )
 }
 const styles = StyleSheet.create({

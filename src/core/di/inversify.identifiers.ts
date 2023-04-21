@@ -1,5 +1,9 @@
 const SERVICE_IDENTIFIER = {
-    COURSESERVICE: Symbol.for("ICourseInterface")
+    APISERVICE: Symbol.for("IApiService"),
+    GEOLOCATIONAPISERVICE: Symbol.for("IGelolocationApiService"),
+    GEOLOCATIONSERVICE: Symbol.for("IGelolocationService"),
+    COURSESERVICE: Symbol.for("ICourseService"),
+    CITYSERVICE: Symbol.for("ICItyService")
 };
 
 export default SERVICE_IDENTIFIER;
