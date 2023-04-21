@@ -3,7 +3,7 @@ import { ICityService } from "../ICityService";
 import { City } from "../model/City";
 import getDistance from "../../utils/GeolocationUtils";
 import SERVICE_IDENTIFIER from "../../di/inversify.identifiers";
-import { IApiService } from "../IApiService";
+import { IApiService } from "../interfaces/IApiService";
 import { container } from "../../di/Inversify.config";
 
 @injectable()

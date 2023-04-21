@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { IApiService } from "../../domain/IApiService";
+import { IApiService } from "../../domain/interfaces/IApiService";
 import { City } from "../../domain/model/City";
 import { UserSkillsWithUserAndCityDTO } from "../../../courses_feature/domain/model/UserSkillsWithUserAndCityDTO";
 

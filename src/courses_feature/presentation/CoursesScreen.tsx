@@ -12,8 +12,8 @@ import { UserSkillsWithUserAndCityDTO } from "../domain/model/UserSkillsWithUser
 import * as Location from 'expo-location';
 import Slider from '@react-native-community/slider';
 import { City } from '../../core/domain/model/City';
-import { ICityService } from '../../core/domain/ICityService';
 import { ScrollView } from 'react-native-gesture-handler';
+import { ICityService } from '../../core/domain/interfaces/ICityService';
 
 type Props = NativeStackScreenProps<StackNavigatorParamList, 'Courses'>
 

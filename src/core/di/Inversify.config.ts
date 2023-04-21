@@ -8,7 +8,7 @@ import { ICourseService } from "../../courses_feature/domain/ICourseService";
 import { ICityService } from "../domain/ICityService";
 import { CityService } from "../domain/services/CityService";
 import { CourseService } from "../domain/services/CourseService";
-import { IApiService } from "../domain/IApiService";
+import { IApiService } from "../domain/interfaces/IApiService";
 import { StrapiApiService } from "../data/api/StrapiApiService";
 import { IGeolocationApiService } from "../domain/IGeolocationApiService";
 import { IGeolocationService } from "../domain/IGeolocationService";
