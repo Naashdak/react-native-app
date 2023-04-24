@@ -14,6 +14,7 @@ import Slider from '@react-native-community/slider';
 import { City } from '../../core/domain/model/City';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ICityService } from '../../core/domain/interfaces/ICityService';
+import { IGeolocationService } from '../../core/domain/interfaces/IGeolocationService';
 
 type Props = NativeStackScreenProps<StackNavigatorParamList, 'Courses'>
 
@@ -21,6 +22,7 @@ export function CoursesScreen({navigation, route}: Props){
     
     const courseService = container.get<ICourseService>(SERVICE_IDENTIFIER.COURSESERVICE);
     const cityService = container.get<ICityService>(SERVICE_IDENTIFIER.CITYSERVICE);
+    const geolocationService = container.get<IGeolocationService>(SERVICE_IDENTIFIER.GEOLOCATIONSERVICE);
 
     const [courses, setCourses] = useState<UserSkillsWithUserAndCityDTO[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -83,6 +85,18 @@ export function CoursesScreen({navigation, route}: Props){
                         location ? location!.coords.latitude :49.1244253,
                         location ? location!.coords.longitude: 2.4535435  
                     )
+                console.log(nearbyCities)
+                console.log("taille :", nearbyCities.length)
+                if(nearbyCities.length == 0){
+                    console.log("coucou")
+                    const cityName = await geolocationService
+                        .getCityByCoordinates(
+                            location ? location!.coords.latitude :49.1244253,
+                            location ? location!.coords.longitude: 2.4535435
+                        )
+                    console.log(cityName)
+                    setCities([cityName])
+                }
                 setCities(nearbyCities)
             } catch (error: any) {
                 setError(error.message)

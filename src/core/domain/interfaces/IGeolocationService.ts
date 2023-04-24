@@ -1,5 +1,3 @@
-import { City } from "../model/City";
-
 export interface IGeolocationService {
-    getCityByCoordinates(lat: number, lon:number): City
+    getCityByCoordinates(lat: number, lon:number): Promise<string>
 }
