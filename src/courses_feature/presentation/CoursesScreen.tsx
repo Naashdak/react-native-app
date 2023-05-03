@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackNavigatorParamList } from "../../core/navigation/StackNavigatorParamList";
 import { useEffect, useState } from "react";
-import { SafeAreaView , Text, View, StyleSheet, FlatList, RefreshControl } from "react-native";
+import { SafeAreaView , Text, View, StyleSheet, FlatList, RefreshControl, Button, TouchableHighlight } from "react-native";
 import CourseCard from "./components/CourseCard";
 import {container} from "../../core/di/Inversify.config";
 import { ICourseService } from "../domain/ICourseService";
@@ -15,6 +15,9 @@ import { City } from '../../core/domain/model/City';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ICityService } from '../../core/domain/interfaces/ICityService';
 import { IGeolocationService } from '../../core/domain/interfaces/IGeolocationService';
+import FontAwesome from '@expo/vector-icons/FontAwesome'
+import BottomSheet from '../../core/presentation/components/BottomSheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 type Props = NativeStackScreenProps<StackNavigatorParamList, 'Courses'>
 
@@ -110,6 +113,7 @@ export function CoursesScreen({navigation, route}: Props){
     }, [cities])
 
     return(
+        <GestureHandlerRootView>
         <SafeAreaView style={styles.container}>
             <View style={styles.slider}>
                 <Text style={styles.sliderText}>Rayon : {labelRadius}km</Text>
@@ -129,6 +133,26 @@ export function CoursesScreen({navigation, route}: Props){
                     step={1}
                 />
             </View>
+            <View style={styles.filters}>
+                <TouchableHighlight
+                    style={styles.buttonClickContainer}
+                    onPress={() => {}}>
+                        <View style={styles.buttonContainer}>
+                            <FontAwesome name='sort' size={32} />
+                            <Text style={styles.buttonText}>Trier par</Text>
+                        </View>
+
+                </TouchableHighlight>
+                <TouchableHighlight
+                    style={styles.buttonClickContainer}
+                    onPress={() => {}}>
+                        <View style={styles.buttonContainer}>
+                            <FontAwesome name='filter' size={32} />
+                            <Text style={styles.buttonText}>Filtres</Text>
+                        </View>
+
+                </TouchableHighlight>
+            </View>
             <ScrollView style={styles.list}
                 refreshControl={
                     <RefreshControl refreshing={loading} onRefresh={onRefresh} />
@@ -138,13 +162,14 @@ export function CoursesScreen({navigation, route}: Props){
                 ))}
                 
             </ScrollView>
+            <BottomSheet />
         </SafeAreaView>
+        </GestureHandlerRootView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        padding: 10
     },
     slider: {
         flexDirection: 'row',
@@ -158,6 +183,35 @@ const styles = StyleSheet.create({
     },
     sliderText: {
         fontSize: 18
+    },
+    filters: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-around'
+    },
+    buttonClickContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: '#009D6E',
+        borderRadius: 5,
+        padding: 5,
+        marginTop: 5,
+        marginBottom: 5,
+        width: 150
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        borderRadius: 10,
+    },
+    buttonIcon: {
+
+    },
+    buttonText: {
+        fontSize: 18,
+        color: '#FAFAFA',
+        marginLeft: 10,
+        marginTop: 2,
     },
     list: {
         height: '93%'

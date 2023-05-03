@@ -9,7 +9,12 @@ module.exports = function(api) {
       'babel-plugin-transform-typescript-metadata',
       ["@babel/plugin-proposal-decorators", { "legacy": true }],
       ["@babel/plugin-proposal-class-properties", { "loose" : true }],
-      "babel-plugin-parameter-decorator"
+      "babel-plugin-parameter-decorator",
+      [
+        'react-native-reanimated/plugin', {
+            relativeSourceLocation: true,
+        },
+    ]
     ]
   };
 };
