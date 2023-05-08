@@ -1,23 +1,31 @@
-import React, { useCallback, useEffect, useImperativeHandle, useState } from "react"
-import { Dimensions, StyleSheet, View, Text} from 'react-native'
+import React, { useCallback, useImperativeHandle, useState } from "react"
+import { Dimensions, StyleSheet, View, Text, TouchableOpacity} from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import Animated, { Extrapolate, interpolate, useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
-import RadioButton, { RadioButtonItem } from "./RadioButton"
-// import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+import Animated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
+import Filters from "./Filters"
+import { Skill } from "../../../core/domain/model/Skill"
+import { Category } from "../../../core/domain/model/Category"
+import { CategoriesWithSkillDTO } from "../../../core/domain/model/CategoriesWithSkillsDTO"
+
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window')
-const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 704
+const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 428
 
-type BottomSheetProps = {
-    setSortByOption: (value: number) => void
-}
-
-export type BottomSheetRefProps = {
+export type FilterBottomSheetProps = {
     scrollTo: (destination: number) => void
     isActive: () => boolean
 }
+type Props = {
+    categories: CategoriesWithSkillDTO[],
+    // setFilteringOptions:(value: number[]) => void
+    handleCategorySelection:(value: number) => void
+    handleSkillSelection:(skill: Skill) => void
+    selectedCategories: number[]
+    selectedSkills: Skill[],
+    selectableSkills: Skill[]
+}
 
-const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>((props, ref) => {
+const FilterBottomSheet = React.forwardRef<FilterBottomSheetProps, Props>((props, ref) => {
     const translateY = useSharedValue(230)
     const active = useSharedValue(false)
 
@@ -43,18 +51,12 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>((pro
             translateY.value = Math.max(translateY.value, MAX_TRANSLATE_Y)
         })
         .onEnd(() => {
-            if(translateY.value > -SCREEN_HEIGHT/2.5){
+            if(translateY.value > -SCREEN_HEIGHT/2.2){
                 scrollTo(230)
             }
         })
 
     const rBottomSheetStyle = useAnimatedStyle(() => {
-        // const borderRadius = interpolate(
-        //     translateY.value, 
-        //     [MAX_TRANSLATE_Y + 50, MAX_TRANSLATE_Y], 
-        //     [25, 5],
-        //     Extrapolate.CLAMP
-        // )
         return{
             transform: [{ translateY: translateY.value,}],
             borderRadius: 25
@@ -74,12 +76,24 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>((pro
     }, [])
 
     const [option, setOption] = useState(0)
+    const [categoryFilters, setCategoryFilters] = useState([])
+    const [skillFilters, setSkillFilters] = useState<Skill[]>([])
+    const [radius, setRadius] = useState(1)
 
-    const sortByItems = [
-        {label: "Ville", value: 0},
-        {label: "Utilisateur", value: 1},
-        {label: "Catégorie", value: 2}
+    const filteringOptions = [
+        {label: "Catégorie", value: 0, filters: {categoryFilters}},
+        {label: "Compétence", value: 1, filters: {skillFilters}},
+        {label: "Ville", value: 2, radius:{radius}}
     ]
+
+    type FilterOption<T> = {
+        label: string,
+        value: number,
+        options: T
+    }
+    const filters: FilterOption<Skill[]> = {
+        label: "Catéforie", value: 0, options: skillFilters
+    }
 
     return(
         <>
@@ -100,12 +114,13 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>((pro
             <Animated.View style={[styles.bottomSheetContainer, rBottomSheetStyle]}>
                 <View style={styles.line} />
                 <View style={styles.filterContainer}>
-                    <RadioButton 
-                        data={sortByItems} 
-                        onSelect={(item: RadioButtonItem) =>{ 
-                            setOption(item.value)
-                            props.setSortByOption(item.value)
-                        }} />
+                    <Filters 
+                        data={props.categories} 
+                        onCategorySelection={props.handleCategorySelection} 
+                        onSkillSelection={props.handleSkillSelection} 
+                        selectedCategories={props.selectedCategories}
+                        selectedSkills={props.selectedSkills}
+                        selectableSkills={props.selectableSkills}/>
                 </View>
             </Animated.View>
         </GestureDetector>
@@ -114,7 +129,7 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>((pro
     )
 })
 
-export default BottomSheet
+export default FilterBottomSheet
 
 const styles = StyleSheet.create({
     bottomSheetContainer: {
@@ -133,9 +148,6 @@ const styles = StyleSheet.create({
         marginVertical: 15,
         borderRadius: 2
     },
-    filterContainer: {
-
-    },
     radioFormContainer: {
         gap: 20
     },
@@ -151,5 +163,28 @@ const styles = StyleSheet.create({
         paddingHorizontal: 18,
         fontSize: 18,
         marginBottom: 20
+    },
+    filterContainer: {
+    },
+    filter: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        height: 60
+    },
+    filterTitle: {
+        fontSize: 20,
+        color: 'grey',
+    },
+    divider: {
+        height: 1,
+        backgroundColor: 'grey',
+        opacity: 0.2
+    },
+    options: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10
     }
 })

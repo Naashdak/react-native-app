@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackNavigatorParamList } from "../../core/navigation/StackNavigatorParamList";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView , Text, View, StyleSheet, FlatList, RefreshControl, Button, TouchableHighlight } from "react-native";
 import CourseCard from "./components/CourseCard";
 import {container} from "../../core/di/Inversify.config";
@@ -16,8 +16,14 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { ICityService } from '../../core/domain/interfaces/ICityService';
 import { IGeolocationService } from '../../core/domain/interfaces/IGeolocationService';
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import BottomSheet from '../../core/presentation/components/BottomSheet';
+import BottomSheet, { BottomSheetRefProps } from '../../core/presentation/components/BottomSheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import FilterBottomSheet, { FilterBottomSheetProps } from './components/FilterBottomSheet';
+import { ISkillService } from '../domain/ISkillService';
+import { Skill } from '../../core/domain/model/Skill';
+import { ICategoryService } from '../domain/ICategoryService';
+import { Category } from '../../core/domain/model/Category';
+import { CategoriesWithSkillDTO } from '../../core/domain/model/CategoriesWithSkillsDTO';
 
 type Props = NativeStackScreenProps<StackNavigatorParamList, 'Courses'>
 
@@ -26,6 +32,9 @@ export function CoursesScreen({navigation, route}: Props){
     const courseService = container.get<ICourseService>(SERVICE_IDENTIFIER.COURSESERVICE);
     const cityService = container.get<ICityService>(SERVICE_IDENTIFIER.CITYSERVICE);
     const geolocationService = container.get<IGeolocationService>(SERVICE_IDENTIFIER.GEOLOCATIONSERVICE);
+    const skillService = container.get<ISkillService>(SERVICE_IDENTIFIER.SKILLSERVICE);
+    const categoryService = container.get<ICategoryService>(SERVICE_IDENTIFIER.CATEGORYSERVICE);
+    
 
     const [courses, setCourses] = useState<UserSkillsWithUserAndCityDTO[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -40,10 +49,59 @@ export function CoursesScreen({navigation, route}: Props){
     const [location, setLocation] = useState<Location.LocationObject>();
     const [cities, setCities] = useState<string[]>()
     const [actualCity, setActualCity] = useState<City>()
+    const [skills, setSkills] = useState<Skill[]>([])
+    const [categories, setCategories] = useState<Category[]>([])
+    const [categoriesWithSkills, setCategoriesWithSkills] = useState<CategoriesWithSkillDTO[]>([])
+
+    const fetchSkills = async () => {
+        try {
+            setSkills(await skillService.getSkills())
+        } catch (error: any) {
+            setError(error.message)
+        }
+    }
+
+    const fetchCategories = async () => {
+        try {
+            setCategories(await categoryService.getCategories())
+        } catch (error: any) {
+            setError(error.message)
+        }
+    }
+
+    const fetchCategoriesWithSkills = async () => {
+        try {
+            setCategoriesWithSkills(await categoryService.getCategoriesWithSkills())
+        } catch (error: any) {
+            setError(error.message)
+        }
+    }
+
+    
 
     // range slider
     const [radius, setRadius] = useState<number>()
     const [labelRadius, setLabelRadius] = useState<number>(10)
+
+    const ref = useRef<BottomSheetRefProps>(null)
+    const refFilters = useRef<FilterBottomSheetProps>(null)
+    const onPress = useCallback(() => {
+        const isActive = ref?.current?.isActive()
+        if(isActive){
+            ref?.current?.scrollTo(230)
+        } else {
+            ref?.current?.scrollTo(-125)
+        }
+    }, [])
+
+    const onPressFilters = useCallback(() => {
+        const isActive = refFilters?.current?.isActive()
+        if(isActive){
+            refFilters?.current?.scrollTo(230)
+        } else {
+            refFilters?.current?.scrollTo(-400)
+        }
+    }, [])
 
     const onRefresh = React.useCallback(() => {
         fetchData()
@@ -88,16 +146,12 @@ export function CoursesScreen({navigation, route}: Props){
                         location ? location!.coords.latitude :49.1244253,
                         location ? location!.coords.longitude: 2.4535435  
                     )
-                console.log(nearbyCities)
-                console.log("taille :", nearbyCities.length)
                 if(nearbyCities.length == 0){
-                    console.log("coucou")
                     const cityName = await geolocationService
                         .getCityByCoordinates(
                             location ? location!.coords.latitude :49.1244253,
                             location ? location!.coords.longitude: 2.4535435
                         )
-                    console.log(cityName)
                     setCities([cityName])
                 }
                 setCities(nearbyCities)
@@ -112,8 +166,123 @@ export function CoursesScreen({navigation, route}: Props){
         fetchData()
     }, [cities])
 
+    useEffect(() => {
+        fetchCategoriesWithSkills()
+    }, [refFilters.current?.isActive])
+
+    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+    const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
+    const [selectableSkills, setSelectableSkills] = useState<Skill[]>([])
+
+
+    const handleCategorySelection = (categoryId: number) => {
+        // Check if the category is already selected
+        const categoryIndex = selectedCategories.indexOf(categoryId);
+        const categorySkills = categoriesWithSkills.find((category) => category.id === categoryId)!.skills.flat()
+        if (categoryIndex === -1) {
+            // Category is not selected, add it to the selected categories
+            setSelectedCategories([...selectedCategories, categoryId]);
+            setSelectableSkills([...selectableSkills, ...categorySkills])
+        } else {
+            // Category is already selected, remove it from the selected categories
+            setSelectedCategories(selectedCategories.filter((category) => category !== categoryId));
+
+            
+            // Also remove any selected skills that belong to this category
+            setSelectedSkills(selectedSkills.filter((skill) => {
+                const skillCategory = categoriesWithSkills.find((category) => category.skills.includes(skill))
+                return skillCategory?.id !== categoryId
+            }))
+            setSelectableSkills(selectableSkills.filter((skill) => {
+                const skillCategory = categoriesWithSkills.find((category) => category.skills.includes(skill))
+                return skillCategory?.id !== categoryId
+            }))
+        }
+    };
+      
+    const handleSkillSelection = (skill: Skill) => {
+        if(selectedSkills.find((item) => item === skill)){
+            setSelectedSkills(selectedSkills.filter((item) => item !== skill))
+        } else {
+            setSelectedSkills([...selectedSkills, skill]);
+        }
+        // Check if the skill's category is already selected
+        // const categorySelected = selectedCategories.some((categoryId) => {
+        //     const categorySkills = categoriesWithSkills[categoryId].skills
+        //     return categorySkills.includes(skill)
+        // });
+        // if (categorySelected) {
+        //     // Category is selected, add the skill to the selected skills
+        //     setSelectedSkills([...selectedSkills, skill]);
+        // } else {
+        //     setSelectedSkills(selectableSkills.filter((item) => item !== skill))
+        // }
+    };
+
+      const filteredResults = categoriesWithSkills.filter((result) => {
+        const categorySelected = selectedCategories.includes(result.id)
+        if(!categorySelected){
+            return false
+        }
+        if(selectedSkills.length === 0){
+            return true
+        }
+
+        const skillsSelected = selectedSkills.some((skill) => result.skills.includes(skill))
+        return skillsSelected
+      })
+
+
+    const [sortingOption, setSortingOption] = useState(0)
+    const [filteringOptions, setFilteringOptions] = useState<number[]>([])
+
+    const sortBy = (courses: UserSkillsWithUserAndCityDTO[], selectedOptions: CategoriesWithSkillDTO[]) => {
+        console.log("Sort by options : ", selectedOptions)
+        const listOfSkills = selectedOptions?.map((item) => item.skills).flat()
+        const skillsId = listOfSkills?.map((item) => item.id).flat()
+
+        // TODO : handle skills options in filter
+        console.log("skill list options : ", listOfSkills)
+        if(sortingOption === 0){
+            return courses
+                .filter((item) => skillsId.includes(item.skill.id))
+                .sort((a, b) => a.user.city.cityName.localeCompare(b.user.city.cityName))
+        } else if(sortingOption === 1){
+            return courses
+                .filter((item) => skillsId.includes(item.skill.id))
+                .sort((a, b) => a.user.username.localeCompare(b.user.username))
+        } else if(sortingOption === 2){
+            return courses
+                .filter((item) => skillsId.includes(item.skill.id))
+                .sort((a, b) => a.skill.skillName.localeCompare(b.skill.skillName))
+        }
+    }
+
+    // const sortBy = (courses: UserSkillsWithUserAndCityDTO[], filteringOptions: number[]) => {
+    //     console.log("options :",filteringOptions)
+    //     const skills = courses.map((item) => item.skill.id).flat()
+    //     if(sortingOption === 0){
+    //         const test = courses
+    //         .filter((item) => skills.includes(item.skill.id))
+    //         // .sort((a, b) => a.user.city.cityName.localeCompare(b.user.city.cityName))
+    //         console.log("TEST --------------> : ",test)
+    //         return test
+    //         // return courses
+    //         //     .filter((item) => skillIds.includes(item.skill.id))
+    //         //     .sort((a, b) => a.user.city.cityName.localeCompare(b.user.city.cityName))
+    //     } else if(sortingOption === 1){
+    //         return courses
+    //             .filter((item) => skills.includes(item.skill.id))
+    //             .sort((a, b) => a.user.username.localeCompare(b.user.username))
+    //     } else if(sortingOption === 2){
+    //         return courses
+    //             .filter((item) => skills.includes(item.skill.id))
+    //             .sort((a, b) => a.skill.skillName.localeCompare(b.skill.skillName))
+    //     }
+    // }
+    
+
     return(
-        <GestureHandlerRootView>
         <SafeAreaView style={styles.container}>
             <View style={styles.slider}>
                 <Text style={styles.sliderText}>Rayon : {labelRadius}km</Text>
@@ -136,35 +305,46 @@ export function CoursesScreen({navigation, route}: Props){
             <View style={styles.filters}>
                 <TouchableHighlight
                     style={styles.buttonClickContainer}
-                    onPress={() => {}}>
+                    onPress={onPress}>
                         <View style={styles.buttonContainer}>
-                            <FontAwesome name='sort' size={32} />
+                            <FontAwesome name='sort' size={26} color={'white'} />
                             <Text style={styles.buttonText}>Trier par</Text>
                         </View>
 
                 </TouchableHighlight>
                 <TouchableHighlight
                     style={styles.buttonClickContainer}
-                    onPress={() => {}}>
+                    onPress={onPressFilters}>
                         <View style={styles.buttonContainer}>
-                            <FontAwesome name='filter' size={32} />
+                            <FontAwesome name='filter' size={26} color={'white'} />
                             <Text style={styles.buttonText}>Filtres</Text>
                         </View>
 
                 </TouchableHighlight>
             </View>
+
+            
             <ScrollView style={styles.list}
+                //TODO : issue with scroll  
                 refreshControl={
                     <RefreshControl refreshing={loading} onRefresh={onRefresh} />
                 }>
-                {courses?.map((course: UserSkillsWithUserAndCityDTO, index: number) => (
+                {sortBy(courses, filteredResults)?.map((course: UserSkillsWithUserAndCityDTO, index: number) => (
                     <CourseCard key={index} course={course} navigateToDetailsScreen={navigateToDetailsScreen}/>
                 ))}
                 
             </ScrollView>
-            <BottomSheet />
+            <BottomSheet ref={ref} setSortByOption={setSortingOption} />
+            {/* <FilterBottomSheet ref={refFilters} categories={categoriesWithSkills} setFilteringOptions={setFilteringOptions} /> */}
+            <FilterBottomSheet 
+                ref={refFilters} 
+                categories={categoriesWithSkills} 
+                handleCategorySelection={handleCategorySelection} 
+                handleSkillSelection={handleSkillSelection} 
+                selectedCategories={selectedCategories}
+                selectedSkills={selectedSkills}
+                selectableSkills={selectableSkills}/>
         </SafeAreaView>
-        </GestureHandlerRootView>
     )
 }
 
@@ -192,7 +372,7 @@ const styles = StyleSheet.create({
     buttonClickContainer: {
         flexDirection: 'row',
         justifyContent: 'center',
-        backgroundColor: '#009D6E',
+        backgroundColor: '#16A34A',
         borderRadius: 5,
         padding: 5,
         marginTop: 5,
@@ -201,8 +381,8 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         flexDirection: 'row',
-        justifyContent: 'center',
         borderRadius: 10,
+        height: 30
     },
     buttonIcon: {
 
