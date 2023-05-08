@@ -4,6 +4,9 @@ import { City } from "../../domain/model/City";
 import { UserSkillsWithUserAndCityDTO } from "../../../courses_feature/domain/model/UserSkillsWithUserAndCityDTO";
 // @ts-ignore
 import {API_BASE, BEARER_TOKEN} from "react-native-dotenv"
+import { Skill } from "../../domain/model/Skill";
+import { Category } from "../../domain/model/Category";
+import { CategoriesWithSkillDTO } from "../../domain/model/CategoriesWithSkillsDTO";
 
 
 @injectable()
@@ -55,4 +58,92 @@ export class StrapiApiService implements IApiService{
             throw new Error(error?.message || "Erreur")
         }
     }
+    public async getCategories(): Promise<Category[]>{
+        try {
+            const response = await fetch(
+                `${API_BASE}categories?fields[0]=categoryName`, {
+                method: 'GET',
+                headers: new Headers({
+                    'Authorization': `Bearer ${BEARER_TOKEN}`, 
+                    'Content-Type': 'application/json'
+                }), 
+            });
+            if(!response.ok){
+                throw new Error("Erreur")
+            }
+            const json = await response.json() as { data: Category[] }
+            return json.data
+        } catch (error: any) {
+            throw new Error(error?.message || "Erreur")
+        }
+    }
+
+    public async getCategoriesWithSkills(): Promise<CategoriesWithSkillDTO[]>{
+        
+        try {
+            const response = await fetch(
+                `${API_BASE}categories?fields[0]=categoryName&populate[skills][fields][0]=skillName`, {
+                method: 'GET',
+                headers: new Headers({
+                    'Authorization': `Bearer ${BEARER_TOKEN}`, 
+                    'Content-Type': 'application/json'
+                }), 
+            });
+            if(!response.ok){
+                throw new Error("Erreur")
+            }
+            const json = await response.json() as { data: CategoriesWithSkillDTO[] }
+            return json.data
+        } catch (error: any) {
+            throw new Error(error?.message || "Erreur")
+        }
+    }
+
+    public async getAllSkills(): Promise<Skill[]> {
+        try {
+            const response = await fetch(
+                `${API_BASE}skills?fields[0]=skillName`, {
+                method: 'GET',
+                headers: new Headers({
+                    'Authorization': `Bearer ${BEARER_TOKEN}`, 
+                    'Content-Type': 'application/json'
+                }), 
+            });
+            if(!response.ok){
+                throw new Error("Erreur")
+            }
+            const json = await response.json() as { data: Skill[] }
+            return json.data
+        } catch (error: any) {
+            throw new Error(error?.message || "Erreur")
+        }
+    }
+
+    public async getSkillsByCategories(categoryIds: number[]): Promise<Skill[]> {
+        try {
+            let idFilter: string = ""
+            if(categoryIds.length > 0){
+                for(let i = 0; i < categoryIds.length; i++){
+                    idFilter += `&filters[category][id][$eq]=${categoryIds[i]}`
+                }
+            }
+            const response = await fetch(
+                `${API_BASE}skills?fields[0]=skillName${idFilter}`, {
+                method: 'GET',
+                headers: new Headers({
+                    'Authorization': `Bearer ${BEARER_TOKEN}`, 
+                    'Content-Type': 'application/json'
+                }), 
+            });
+            if(!response.ok){
+                throw new Error("Erreur")
+            }
+            const json = await response.json() as { data: Skill[] }
+            return json.data
+        } catch (error: any) {
+            throw new Error(error?.message || "Erreur")
+        }
+    }
+
+    
 }
