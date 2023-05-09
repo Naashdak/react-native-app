@@ -48,26 +48,7 @@ export function CoursesScreen({navigation, route}: Props){
 
     const [location, setLocation] = useState<Location.LocationObject>();
     const [cities, setCities] = useState<string[]>()
-    const [actualCity, setActualCity] = useState<City>()
-    const [skills, setSkills] = useState<Skill[]>([])
-    const [categories, setCategories] = useState<Category[]>([])
     const [categoriesWithSkills, setCategoriesWithSkills] = useState<CategoriesWithSkillDTO[]>([])
-
-    const fetchSkills = async () => {
-        try {
-            setSkills(await skillService.getSkills())
-        } catch (error: any) {
-            setError(error.message)
-        }
-    }
-
-    const fetchCategories = async () => {
-        try {
-            setCategories(await categoryService.getCategories())
-        } catch (error: any) {
-            setError(error.message)
-        }
-    }
 
     const fetchCategoriesWithSkills = async () => {
         try {
@@ -206,21 +187,11 @@ export function CoursesScreen({navigation, route}: Props){
         } else {
             setSelectedSkills([...selectedSkills, skill]);
         }
-        // Check if the skill's category is already selected
-        // const categorySelected = selectedCategories.some((categoryId) => {
-        //     const categorySkills = categoriesWithSkills[categoryId].skills
-        //     return categorySkills.includes(skill)
-        // });
-        // if (categorySelected) {
-        //     // Category is selected, add the skill to the selected skills
-        //     setSelectedSkills([...selectedSkills, skill]);
-        // } else {
-        //     setSelectedSkills(selectableSkills.filter((item) => item !== skill))
-        // }
     };
 
       const filteredResults = categoriesWithSkills.filter((result) => {
         const categorySelected = selectedCategories.includes(result.id)
+        console.log("categorySelected : ", categorySelected)
         if(!categorySelected){
             return false
         }
@@ -228,59 +199,63 @@ export function CoursesScreen({navigation, route}: Props){
             return true
         }
 
-        const skillsSelected = selectedSkills.some((skill) => result.skills.includes(skill))
+        const skillsSelected = result.skills.some((skill) => selectedSkills.includes(skill))
+        
+        console.log("skillsSelected : ", skillsSelected)
         return skillsSelected
       })
 
 
     const [sortingOption, setSortingOption] = useState(0)
-    const [filteringOptions, setFilteringOptions] = useState<number[]>([])
 
     const sortBy = (courses: UserSkillsWithUserAndCityDTO[], selectedOptions: CategoriesWithSkillDTO[]) => {
-        console.log("Sort by options : ", selectedOptions)
         const listOfSkills = selectedOptions?.map((item) => item.skills).flat()
-        const skillsId = listOfSkills?.map((item) => item.id).flat()
+        console.log("list of skills : ", listOfSkills)
+        const skillsId = selectedSkills?.map((item) => item.id)
+        const test = listOfSkills?.map((item) => item.id)
 
-        // TODO : handle skills options in filter
         console.log("skill list options : ", listOfSkills)
         if(sortingOption === 0){
             return courses
-                .filter((item) => skillsId.includes(item.skill.id))
+                .filter((item) => {
+                    console.log(selectedSkills.length)
+                    if(selectedCategories.length === 0){
+                        return item
+                    }
+                    if(selectedSkills.length === 0){
+                        return test.includes(item.skill.id)
+                    }
+                    return skillsId.includes(item.skill.id)
+                })
                 .sort((a, b) => a.user.city.cityName.localeCompare(b.user.city.cityName))
         } else if(sortingOption === 1){
             return courses
-                .filter((item) => skillsId.includes(item.skill.id))
+            .filter((item) => {
+                console.log(selectedSkills.length)
+                if(selectedCategories.length === 0){
+                    return item
+                }
+                if(selectedSkills.length === 0){
+                    return test.includes(item.skill.id)
+                }
+                return skillsId.includes(item.skill.id)
+            })
                 .sort((a, b) => a.user.username.localeCompare(b.user.username))
         } else if(sortingOption === 2){
             return courses
-                .filter((item) => skillsId.includes(item.skill.id))
+            .filter((item) => {
+                console.log(selectedSkills.length)
+                if(selectedCategories.length === 0){
+                    return item
+                }
+                if(selectedSkills.length === 0){
+                    return test.includes(item.skill.id)
+                }
+                return skillsId.includes(item.skill.id)
+            })
                 .sort((a, b) => a.skill.skillName.localeCompare(b.skill.skillName))
         }
     }
-
-    // const sortBy = (courses: UserSkillsWithUserAndCityDTO[], filteringOptions: number[]) => {
-    //     console.log("options :",filteringOptions)
-    //     const skills = courses.map((item) => item.skill.id).flat()
-    //     if(sortingOption === 0){
-    //         const test = courses
-    //         .filter((item) => skills.includes(item.skill.id))
-    //         // .sort((a, b) => a.user.city.cityName.localeCompare(b.user.city.cityName))
-    //         console.log("TEST --------------> : ",test)
-    //         return test
-    //         // return courses
-    //         //     .filter((item) => skillIds.includes(item.skill.id))
-    //         //     .sort((a, b) => a.user.city.cityName.localeCompare(b.user.city.cityName))
-    //     } else if(sortingOption === 1){
-    //         return courses
-    //             .filter((item) => skills.includes(item.skill.id))
-    //             .sort((a, b) => a.user.username.localeCompare(b.user.username))
-    //     } else if(sortingOption === 2){
-    //         return courses
-    //             .filter((item) => skills.includes(item.skill.id))
-    //             .sort((a, b) => a.skill.skillName.localeCompare(b.skill.skillName))
-    //     }
-    // }
-    
 
     return(
         <SafeAreaView style={styles.container}>
@@ -335,7 +310,6 @@ export function CoursesScreen({navigation, route}: Props){
                 
             </ScrollView>
             <BottomSheet ref={ref} setSortByOption={setSortingOption} />
-            {/* <FilterBottomSheet ref={refFilters} categories={categoriesWithSkills} setFilteringOptions={setFilteringOptions} /> */}
             <FilterBottomSheet 
                 ref={refFilters} 
                 categories={categoriesWithSkills} 
@@ -394,7 +368,7 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     list: {
-        height: '93%'
+        height: '85%'
     }
 
 })

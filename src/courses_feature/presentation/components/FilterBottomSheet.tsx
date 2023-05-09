@@ -1,10 +1,9 @@
-import React, { useCallback, useImperativeHandle, useState } from "react"
-import { Dimensions, StyleSheet, View, Text, TouchableOpacity} from 'react-native'
+import React, { useCallback, useImperativeHandle } from "react"
+import { Dimensions, StyleSheet, View} from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import Animated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 import Filters from "./Filters"
 import { Skill } from "../../../core/domain/model/Skill"
-import { Category } from "../../../core/domain/model/Category"
 import { CategoriesWithSkillDTO } from "../../../core/domain/model/CategoriesWithSkillsDTO"
 
 
@@ -74,26 +73,6 @@ const FilterBottomSheet = React.forwardRef<FilterBottomSheetProps, Props>((props
             pointerEvents: active.value ? 'auto' : 'none'
         } as any
     }, [])
-
-    const [option, setOption] = useState(0)
-    const [categoryFilters, setCategoryFilters] = useState([])
-    const [skillFilters, setSkillFilters] = useState<Skill[]>([])
-    const [radius, setRadius] = useState(1)
-
-    const filteringOptions = [
-        {label: "Catégorie", value: 0, filters: {categoryFilters}},
-        {label: "Compétence", value: 1, filters: {skillFilters}},
-        {label: "Ville", value: 2, radius:{radius}}
-    ]
-
-    type FilterOption<T> = {
-        label: string,
-        value: number,
-        options: T
-    }
-    const filters: FilterOption<Skill[]> = {
-        label: "Catéforie", value: 0, options: skillFilters
-    }
 
     return(
         <>

@@ -16,51 +16,13 @@ type Props = {
     selectableSkills: Skill[],
     onCategorySelection: (value: number) => void
     onSkillSelection: (skill: Skill) => void
-    // onSelect: (value: number) => void,
 }
 
 type FilterStatus = {
     [key: string]: boolean;
 }
 
-type FilterItem = {
-    name: string,
-    content: FilterContent
-}
-
-type FilterContent = {
-    value: CategoriesWithSkillDTO[] | Skill[],
-    type : 'skill'| 'category'
-}
-
 const Filters = ({data, onCategorySelection, onSkillSelection, selectedCategories, selectedSkills, selectableSkills}: Props) => {
-    const [options, setOptions] = useState<number[]>([])
-    // const toggleHandler = (item: CategoriesWithSkillDTO) => {
-    //     const skills = item.skills?.map((item) => item.id).flat()
-    //     onSelect(skills)
-    //     setOptions((prevSkills) =>
-    //         [...prevSkills, ...options]
-    //     )
-    // }
-
-    const [categoryOptions, setCategoryOptions] = useState<CategoriesWithSkillDTO[]>([])
-    const [skillOptions, setSkillOptions] = useState<Skill[]>([])
-
-    // ----------------------------------------------
-
-    // ----------------------------------------------
-
-
-    // useEffect(() => {
-    //     setSkills(props.categories.map(category => category.skills).flat())
-    // }, [categoryOptions])
-
-    const toggleCategoryAndSkills = (category: CategoriesWithSkillDTO) => {
-        categoryOptions.includes(category) 
-            ? setCategoryOptions(categoryOptions.filter(item => item.id === category.id))
-            : setCategoryOptions([...categoryOptions, category])
-    }
-
     const [filterStatus, setFilterStatus] = useState<FilterStatus>({
         item1: false,
         item2: false,
@@ -72,134 +34,6 @@ const Filters = ({data, onCategorySelection, onSkillSelection, selectedCategorie
             [itemName]: !prevStatus[itemName]
         })))
     }
-
-    const resetFilters = () => {
-        setCategoryOptions([])
-        setSkillOptions([])
-    }
-
-    // const [categoryOptions, setCategoryOptions] = useState<Category[]>([])
-    // const [skillOptions, setSKillOptions] = useState<Skill[]>([])
-
-    // const [categoriesWithSkills, setCategoriesWithSkills] = useState<CategoriesWithSkillDTO[]>([])
-
-    // const toggleCategory = (category: CategoriesWithSkillDTO) => {
-    //     if(categoryOptions.includes(category)){
-    //         setCategoryOptions(categoryOptions.filter(item => item.id !== category.id))
-    //         let skillIdsToRemove: number[] = []
-    //         category.skills.forEach(element => {
-    //             skillIdsToRemove.push(element.id)
-    //         });
-    //         setSkillOptions((prevSkill) => 
-    //             prevSkill.filter((skill) => !skillIdsToRemove.includes(skill.id))
-    //         )
-    //         const toRemove = skills.filter((skill) => !skillIdsToRemove.includes(skill.id))
-    //         console.log("To Remove : ",toRemove)
-    //         props.setFilteringOptions(toRemove)
-    //         // props.setFilteringOptions(skillOptions)
-    //     } else {
-    //         setCategoryOptions([...categoryOptions, category])
-    //         setSkillOptions((prevSkills) => [...prevSkills, ...category.skills])
-    //         const toAdd = category.skills
-    //         const skillsToAdd = category.skills?.map((item) => item).flat()
-    //         console.log("To Add :", skillsToAdd)
-    //         props.setFilteringOptions(skillsToAdd)
-    //         // props.setFilteringOptions([...props.skillFilterOptions, category.skills])
-    //     }
-    // }
-
-    // const selectCategoryHandler = (item: Category) => {
-    //     categoryOptions.includes(item) ? 
-    //         categoryOptions.splice(categoryOptions.indexOf(item)) : categoryOptions.push(item)
-    //     console.log(categoryOptions)
-    // }
-
-    // const renderItem = (content: FilterContent) => {
-    //     if(content.type === 'category'){
-    //         return(
-    //             <View style={styles.categoryListContainer}>
-    //                 {(content.value as Category[])?.map((item: Category) => (
-    //                     <TouchableOpacity 
-    //                         style={[
-    //                             styles.categoryButton,
-    //                             categoryOptions.includes(item) ? {backgroundColor: '#16A34A'}: {backgroundColor: '#DCDCDC'}
-    //                         ]}
-    //                         onPress={() => toggleCategory(item)}>
-    //                         <Text style={[
-    //                             categoryOptions.includes(item) ? {color: 'white'}: {color: 'black'}
-    //                             ]}>
-    //                                 {item.categoryName}</Text>
-    //                     </TouchableOpacity>
-    //                 ))}
-    //             </View>
-    //         )
-    //     } else if(content.type === 'skill'){
-    //         return(
-    //             <View>
-    //                 {(content.value as Skill[])?.map((item: Skill) => (
-    //                     <Text>{item.skillName}</Text>
-    //                 ))}
-    //             </View>
-    //         )
-    //     }
-    // }
-
-    // const filteredSkills = []
-
-    //     for(const category of categoryOptions){
-    //         for(const skill of category.skills){
-    //             if(categoryOptions.includes(category.id)){
-    //                 filteredSkills.push(skill)
-    //             }
-    //         }
-    //     }
-
-    // const data: FilterItem[] = [
-    //     {name: "Categorie", content:{ value: props.categories, type: 'category'}},
-    //     {name: "Compétence", content:{ value: props.categories, type: 'skill'}},
-    // ]
-
-    // const renderItem = (content: FilterContent) => {
-    //     if(content.type === 'category'){
-    //         return(
-    //             <View style={styles.categoryListContainer}>
-    //                 {(content.value as CategoriesWithSkillDTO[])?.map((item: CategoriesWithSkillDTO, index) => (
-    //                     <TouchableOpacity 
-    //                         style={[
-    //                             styles.categoryButton,
-    //                             categoryOptions.includes(item) ? {backgroundColor: '#16A34A'}: {backgroundColor: '#DCDCDC'}
-    //                         ]}
-    //                         key={index}
-    //                         onPress={() => toggleCategory(item)}>
-    //                         <Text style={[
-    //                             categoryOptions.includes(item) ? {color: 'white'}: {color: 'black'}
-    //                             ]}>
-    //                                 {item.categoryName}</Text>
-    //                     </TouchableOpacity>
-    //                 ))}
-    //             </View>
-    //         )
-    //     } else if(content.type === 'skill'){
-    //         return(
-    //             <View style={styles.categoryListContainer}>
-    //                 {(skills as Skill[])?.map((item: Skill, index) => (
-    //                     <TouchableOpacity 
-    //                         style={[
-    //                             styles.categoryButton,
-    //                             skillOptions.includes(item) ? {backgroundColor: '#16A34A'}: {backgroundColor: '#DCDCDC'}
-    //                         ]}
-    //                         key={index}
-    //                         onPress={() => {}}>
-    //                         <Text style={[
-    //                             skillOptions.includes(item) ? {color: 'white'}: {color: 'black'}
-    //                             ]}>
-    //                                 {item.skillName}</Text>
-    //                     </TouchableOpacity>
-    //                 ))}
-    //             </View>
-    //         )
-    //     }
-    // }
 
     return(
         <ScrollView>
@@ -269,51 +103,6 @@ const Filters = ({data, onCategorySelection, onSkillSelection, selectedCategorie
                         : null
                     }
                 </View>
-                {/* <View> */}
-                {/* {data?.map((items, index) => (
-                    <View key={index}>
-                        <TouchableOpacity
-                            style={styles.filter}
-                            onPress={() => toggleFilterItem(items.name)}>
-                            <Text style={styles.filterTitle}>{items.name}</Text>
-                            <View style={styles.options}>
-                                <Text>{filterStatus[items.name] ? "Voir moins" : "Voir plus"}</Text>
-                                <FontAwesome name={filterStatus[items.name] ? "chevron-down" : "chevron-right"} size={16}/>
-                            </View>
-                        </TouchableOpacity>
-                        {filterStatus[items.name] ? 
-                            <View> */}
-                                {/* {items.skills?.map((item: Skill) => (
-                                    <View>
-                                        <TouchableOpacity 
-                                            style={[
-                                                styles.categoryButton,
-                                                categoryOptions.includes(item) ? {backgroundColor: '#16A34A'}: {backgroundColor: '#DCDCDC'}
-                                            ]}
-                                            onPress={() => toggleCategory(item)}>
-                                            <Text style={[
-                                                categoryOptions.includes(item) ? {color: 'white'}: {color: 'black'}
-                                                ]}>
-                                                    {item.categoryName}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                ))} */}
-                                {/* {renderItem(items.content)} */}
-                            {/* </View>
-                            : null
-                        }
-                        <View style={styles.divider} /> */}
-                    {/* </View> */}
-                {/* ))}
-                </View> */}
-                {/* <TouchableHighlight
-                    style={styles.buttonClickContainer}
-                    onPress={() => {}}>
-                        <View style={styles.buttonContainer}>
-                            <FontAwesome name='check' size={26} color={'white'} />
-                            <Text style={styles.buttonText}>Valider</Text>
-                        </View>
-                </TouchableHighlight> */}
             </View>
         </ScrollView>
     )
