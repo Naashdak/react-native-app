@@ -11,18 +11,15 @@ import React from "react";
 import { UserSkillsWithUserAndCityDTO } from "../domain/model/UserSkillsWithUserAndCityDTO";
 import * as Location from 'expo-location';
 import Slider from '@react-native-community/slider';
-import { City } from '../../core/domain/model/City';
 import { ScrollView } from 'react-native-gesture-handler';
 import { ICityService } from '../../core/domain/interfaces/ICityService';
 import { IGeolocationService } from '../../core/domain/interfaces/IGeolocationService';
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import BottomSheet, { BottomSheetRefProps } from '../../core/presentation/components/BottomSheet';
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import FilterBottomSheet, { FilterBottomSheetProps } from './components/FilterBottomSheet';
 import { ISkillService } from '../domain/ISkillService';
 import { Skill } from '../../core/domain/model/Skill';
 import { ICategoryService } from '../domain/ICategoryService';
-import { Category } from '../../core/domain/model/Category';
 import { CategoriesWithSkillDTO } from '../../core/domain/model/CategoriesWithSkillsDTO';
 
 type Props = NativeStackScreenProps<StackNavigatorParamList, 'Courses'>
@@ -69,7 +66,7 @@ export function CoursesScreen({navigation, route}: Props){
     const onPress = useCallback(() => {
         const isActive = ref?.current?.isActive()
         if(isActive){
-            ref?.current?.scrollTo(230)
+            ref?.current?.scrollTo(0)
         } else {
             ref?.current?.scrollTo(-125)
         }
@@ -78,7 +75,7 @@ export function CoursesScreen({navigation, route}: Props){
     const onPressFilters = useCallback(() => {
         const isActive = refFilters?.current?.isActive()
         if(isActive){
-            refFilters?.current?.scrollTo(230)
+            refFilters?.current?.scrollTo(0)
         } else {
             refFilters?.current?.scrollTo(-400)
         }
@@ -191,7 +188,6 @@ export function CoursesScreen({navigation, route}: Props){
 
       const filteredResults = categoriesWithSkills.filter((result) => {
         const categorySelected = selectedCategories.includes(result.id)
-        console.log("categorySelected : ", categorySelected)
         if(!categorySelected){
             return false
         }
@@ -201,7 +197,6 @@ export function CoursesScreen({navigation, route}: Props){
 
         const skillsSelected = result.skills.some((skill) => selectedSkills.includes(skill))
         
-        console.log("skillsSelected : ", skillsSelected)
         return skillsSelected
       })
 
@@ -209,13 +204,76 @@ export function CoursesScreen({navigation, route}: Props){
     const [sortingOption, setSortingOption] = useState(0)
 
     const sortBy = (courses: UserSkillsWithUserAndCityDTO[], selectedOptions: CategoriesWithSkillDTO[]) => {
+
+        
+        console.log("options : ",selectedOptions)
         const listOfSkills = selectedOptions?.map((item) => item.skills).flat()
-        console.log("list of skills : ", listOfSkills)
+        // TODO : handle when several categories are selected with some with selected skills and other with not
+        const categories = selectedOptions.map((item) => item)
+        const selectedCategoriesWithoutSelectedSkill = listOfSkills.filter((item) => !selectedSkills.includes(item))
+        console.log("test jpp pls : ", selectedCategoriesWithoutSelectedSkill)
         const skillsId = selectedSkills?.map((item) => item.id)
         const test = listOfSkills?.map((item) => item.id)
 
-        console.log("skill list options : ", listOfSkills)
+        const jpp = categoriesWithSkills.filter((category) => {
+            const categorySelected = selectedCategories.includes(category.id)
+            if(!categorySelected){
+                return false
+            }
+
+            const skillsSelected = selectableSkills.some((skill) => category.skills.includes(skill))
+            if(!skillsSelected){
+                return true
+            }
+            return skillsSelected
+        })
+
+        // const filter = categoriesWithSkills
+        // .filter((category) => {
+        //     return selectedCategories.includes(category.id)
+        // }).map((category) => {
+        //     const skillsnames = category.skills.map((skill) => skill.skillName)
+        //     const skills = category.skills.map((skill) => skill)
+        //     if(selectableSkills.some(skill => !skillsnames.includes(skill.skillName))){
+        //         selectedSkills.push(...skills)
+        //     }
+        //     return {categoryName: category.categoryName, id: category.id, skills: skills}
+        // })
+
+        // console.log("filters : ", filter)
+
+
+        // if categoy is selected
+        //   if selected skills dont have category's skill
+        //     return true
+        //   else 
+        //     return selected skills 
+
         if(sortingOption === 0){
+            
+            return courses
+                .filter((item) => {
+                    if(selectedCategories.length === 0){
+                        return item
+                    }
+                    if(selectedSkills.length === 0){
+                        // console.log("selectedSkills.length = 0")
+                        return test.includes(item.skill.id)
+                    }
+                    const truc = listOfSkills.some((item) => {
+                        console.log('item : ', item)
+                        const t = test.includes(item.id)
+                        console.log(t)
+                        return t
+                    })
+                    console.log(truc)
+                    // if(listOfSkills.some((item) => !test.includes(item.id))){
+                    //     return
+                    // }
+                    return skillsId.includes(item.skill.id)
+                })
+                .sort((a, b) => a.user.city.cityName.localeCompare(b.user.city.cityName))
+        } else if(sortingOption === 1){
             return courses
                 .filter((item) => {
                     console.log(selectedSkills.length)
@@ -227,38 +285,25 @@ export function CoursesScreen({navigation, route}: Props){
                     }
                     return skillsId.includes(item.skill.id)
                 })
-                .sort((a, b) => a.user.city.cityName.localeCompare(b.user.city.cityName))
-        } else if(sortingOption === 1){
-            return courses
-            .filter((item) => {
-                console.log(selectedSkills.length)
-                if(selectedCategories.length === 0){
-                    return item
-                }
-                if(selectedSkills.length === 0){
-                    return test.includes(item.skill.id)
-                }
-                return skillsId.includes(item.skill.id)
-            })
                 .sort((a, b) => a.user.username.localeCompare(b.user.username))
         } else if(sortingOption === 2){
             return courses
-            .filter((item) => {
-                console.log(selectedSkills.length)
-                if(selectedCategories.length === 0){
-                    return item
-                }
-                if(selectedSkills.length === 0){
-                    return test.includes(item.skill.id)
-                }
-                return skillsId.includes(item.skill.id)
-            })
+                .filter((item) => {
+                    if(selectedCategories.length === 0){
+                        return item
+                    }
+                    if(selectedSkills.length === 0){
+                        return test.includes(item.skill.id)
+                    }
+                    return skillsId.includes(item.skill.id)
+                })
                 .sort((a, b) => a.skill.skillName.localeCompare(b.skill.skillName))
         }
     }
 
     return(
         <SafeAreaView style={styles.container}>
+            {/* <View style={styles.header} /> */}
             <View style={styles.slider}>
                 <Text style={styles.sliderText}>Rayon : {labelRadius}km</Text>
                 <Slider
@@ -275,6 +320,7 @@ export function CoursesScreen({navigation, route}: Props){
                         setLabelRadius(value)
                     }}
                     step={1}
+                    thumbTintColor="#16A34A"
                 />
             </View>
             <View style={styles.filters}>
@@ -323,6 +369,11 @@ export function CoursesScreen({navigation, route}: Props){
 }
 
 const styles = StyleSheet.create({
+    header:{
+        height: 100,
+        backgroundColor: 'white'
+
+    },
     container: {
     },
     slider: {
@@ -333,7 +384,7 @@ const styles = StyleSheet.create({
     },
     sliderContent: {
         width: 200,
-        height: 60
+        height: 60,
     },
     sliderText: {
         fontSize: 18
@@ -368,7 +419,6 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     list: {
-        height: '85%'
+        height: '82%'
     }
-
 })
