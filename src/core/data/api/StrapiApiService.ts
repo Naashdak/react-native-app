@@ -22,7 +22,7 @@ export class StrapiApiService implements IApiService{
                 }), 
             })
             if(!response.ok){
-                throw new Error("Erreur")
+                throw new Error(await response.text())
             }
             const json = await response.json() as { data: City[] }
             return json.data
@@ -50,7 +50,7 @@ export class StrapiApiService implements IApiService{
                 }), 
             });
             if(!response.ok){
-                throw new Error("Erreur")
+                throw new Error(await response.text())
             }
             const json = await response.json() as { data: UserSkillsWithUserAndCityDTO[] }
             return json.data
@@ -69,7 +69,7 @@ export class StrapiApiService implements IApiService{
                 }), 
             });
             if(!response.ok){
-                throw new Error("Erreur")
+                throw new Error(await response.text())
             }
             const json = await response.json() as { data: Category[] }
             return json.data
@@ -90,7 +90,7 @@ export class StrapiApiService implements IApiService{
                 }), 
             });
             if(!response.ok){
-                throw new Error("Erreur")
+                throw new Error(await response.text())
             }
             const json = await response.json() as { data: CategoriesWithSkillDTO[] }
             return json.data
@@ -110,7 +110,7 @@ export class StrapiApiService implements IApiService{
                 }), 
             });
             if(!response.ok){
-                throw new Error("Erreur")
+                throw new Error(await response.text())
             }
             const json = await response.json() as { data: Skill[] }
             return json.data
@@ -136,7 +136,7 @@ export class StrapiApiService implements IApiService{
                 }), 
             });
             if(!response.ok){
-                throw new Error("Erreur")
+                throw new Error(await response.text())
             }
             const json = await response.json() as { data: Skill[] }
             return json.data

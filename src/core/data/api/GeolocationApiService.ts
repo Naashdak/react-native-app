@@ -13,7 +13,7 @@ export class GeolocationApiService implements IGeolocationApiService {
                 }
             );
             if(!response.ok){
-                throw new Error("Erreur")
+                throw new Error(await response.text())
             }
 
             const json = await response.json() as GeolocationApiProperties[]

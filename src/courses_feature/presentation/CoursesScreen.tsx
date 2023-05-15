@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackNavigatorParamList } from "../../core/navigation/StackNavigatorParamList";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { SafeAreaView , Text, View, StyleSheet, RefreshControl, TouchableHighlight, ScrollView } from "react-native";
+import { SafeAreaView , Text, View, StyleSheet, RefreshControl, TouchableHighlight, ScrollView, Dimensions } from "react-native";
 import CourseCard from "./components/CourseCard";
 import {container} from "../../core/di/Inversify.config";
 import { ICourseService } from "../domain/ICourseService";
@@ -20,11 +20,13 @@ import { ISkillService } from '../domain/ISkillService';
 import { Skill } from '../../core/domain/model/Skill';
 import { ICategoryService } from '../domain/ICategoryService';
 import { CategoriesWithSkillDTO } from '../../core/domain/model/CategoriesWithSkillsDTO';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type Props = NativeStackScreenProps<StackNavigatorParamList, 'Courses'>
 const DEFAULT_LATITUDE = 49.1244253
 const DEFAULT_LONGITUDE = 2.4535435
 const DEFAULT_RADIUS = 10
+const {height: SCREEN_HEIGHT} = Dimensions.get('window')
 
 export function CoursesScreen({navigation, route}: Props){
     
@@ -277,6 +279,9 @@ export function CoursesScreen({navigation, route}: Props){
 
     return(
         <SafeAreaView style={{flex: 1}}>
+            <LinearGradient
+                colors={['transparent','#0F172A']}
+                style={styles.background}/>
             <View style={styles.slider}>
                 <Text style={styles.sliderText}>Rayon : {labelRadius}km</Text>
                 <Slider
@@ -321,7 +326,7 @@ export function CoursesScreen({navigation, route}: Props){
                 refreshControl={
                     <RefreshControl refreshing={loading} onRefresh={onRefresh} />
                 }>
-                {courses.length > 0 ? sortBy(courses, filteredResults)?.map((course: UserSkillsWithUserAndCityDTO, index: number) => (
+                {courses ? sortBy(courses, filteredResults)?.map((course: UserSkillsWithUserAndCityDTO, index: number) => (
                     <CourseCard key={index} course={course} navigateToDetailsScreen={navigateToDetailsScreen}/>
                 )): <Text style={{alignSelf: 'center'}}>Erreur : {error}</Text>}
                 
@@ -344,6 +349,13 @@ const styles = StyleSheet.create({
         height: 100,
         backgroundColor: 'white'
     },
+    background: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 0,
+        height: SCREEN_HEIGHT,
+      },
     slider: {
         flexDirection: 'row',
         alignItems: 'center',
