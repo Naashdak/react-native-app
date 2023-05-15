@@ -39,7 +39,7 @@ function DetailsScreen({route, navigation}: Props) {
             <Text style={styles.headerText}>{course.skill.skillName}</Text>
             <Text style={styles.headerText}>{course.skillLevel}</Text>
           </View>
-          <View style={{alignItems: 'center'}}>
+          <View style={{alignItems: "center", maxWidth: "33%"}}>
             {course.user.picture ? 
               <Image style={styles.iconContainer} source={{ uri: process.env.API_BASE + "/" + course.user.picture.url}}/>
               : 
@@ -48,7 +48,7 @@ function DetailsScreen({route, navigation}: Props) {
               </View>
             }
               
-            <Text style={{fontSize: 20, color: 'white'}}>{course.user.username}</Text>
+            <Text style={{fontSize: 20, color: "white"}}>{course.user.username}</Text>
           </View>
         </View>
         <View>
@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
   container : {
     backgroundColor: 'white',
     flex: 1,
-    alignItems: 'center',
   },
   background: {
     position: 'absolute',
@@ -100,16 +99,15 @@ const styles = StyleSheet.create({
   courseDetails: {
     marginTop: "20%",
     paddingHorizontal: 25,
-    width: "100%"
   },
   header: {
     flexDirection: "row",
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   }, 
   informations: {
     paddingStart: 3,
-    width: "80%"
+    width: "60%"
   },
   iconContainer: {
     backgroundColor: 'white',
