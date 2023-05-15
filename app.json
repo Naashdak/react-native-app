@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Knowedge",
-    "slug": "Knowedge",
+    "slug": "knowedge",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -45,7 +45,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "3e2b895e-3b60-4e4a-98df-346db2f35bfa"
+        "projectId": "49e6c2ab-2fa2-4889-9339-fd01c1223010"
       }
     }
   }
