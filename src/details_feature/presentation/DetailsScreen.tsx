@@ -108,7 +108,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   }, 
   informations: {
-    paddingStart: 3
+    paddingStart: 3,
+    width: "80%"
   },
   iconContainer: {
     backgroundColor: 'white',

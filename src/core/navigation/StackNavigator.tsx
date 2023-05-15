@@ -5,7 +5,7 @@ import DetailsScreen from '../../details_feature/presentation/DetailsScreen';
 import { LoginScreen } from '../../login_feature/presentation/LoginScreen';
 import { CoursesScreen } from '../../courses_feature/presentation/CoursesScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import { StatusBar } from 'react-native';
+import { Image, StatusBar } from 'react-native';
 
 const HomeStack = createNativeStackNavigator<StackNavigatorParamList>();
 
@@ -23,7 +23,8 @@ const StackNavigator = () => {
             headerStyle: {
               backgroundColor: "#0F172A"
             },
-            headerTintColor: "white"
+            headerTintColor: "white",
+            headerRight: () => <Image style={{width: 50, height: 50}} source={require('./../../../assets/icon.png')} />
           }}
         />
         <HomeStack.Screen 

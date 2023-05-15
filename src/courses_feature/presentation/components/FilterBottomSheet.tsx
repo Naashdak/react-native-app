@@ -8,7 +8,7 @@ import { CategoriesWithSkillDTO } from "../../../core/domain/model/CategoriesWit
 
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window')
-const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 390
+const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + SCREEN_HEIGHT*(45/100)
 
 export type FilterBottomSheetProps = {
     scrollTo: (destination: number) => void
@@ -16,7 +16,6 @@ export type FilterBottomSheetProps = {
 }
 type Props = {
     categories: CategoriesWithSkillDTO[],
-    // setFilteringOptions:(value: number[]) => void
     handleCategorySelection:(value: number) => void
     handleSkillSelection:(skill: Skill) => void
     selectedCategories: number[]
@@ -93,7 +92,7 @@ const FilterBottomSheet = React.forwardRef<FilterBottomSheetProps, Props>((props
             <Animated.View style={[styles.bottomSheetContainer, rBottomSheetStyle]}>
                 <View style={styles.line} />
                 <View style={styles.filterContainer}>
-                    <ScrollView style={{height: SCREEN_HEIGHT/ 1.2}}>
+                    <ScrollView style={{height: SCREEN_HEIGHT/1.4}}>
                         <Filters 
                             data={props.categories} 
                             onCategorySelection={props.handleCategorySelection} 

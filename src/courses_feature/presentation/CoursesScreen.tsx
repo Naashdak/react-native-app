@@ -105,7 +105,7 @@ export function CoursesScreen({navigation, route}: Props){
             ref?.current?.scrollTo(0)
         } else {
             // Open
-            ref?.current?.scrollTo(-125)
+            ref?.current?.scrollTo(-SCREEN_HEIGHT/5)
         }
     }, [])
 
@@ -119,7 +119,7 @@ export function CoursesScreen({navigation, route}: Props){
             refFilters?.current?.scrollTo(0)
         } else {
             // Open
-            refFilters?.current?.scrollTo(-390)
+            refFilters?.current?.scrollTo(-SCREEN_HEIGHT/1.8)
         }
     }, [])
     

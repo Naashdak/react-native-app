@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View, StyleSheet, TouchableHighlight } from "react-native";
+import React, { useState } from "react";
+import { Text, TouchableOpacity, View, StyleSheet, TouchableHighlight } from "react-native";
 import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { CategoriesWithSkillDTO } from "../../../core/domain/model/CategoriesWithSkillsDTO";
 import { Skill } from "../../../core/domain/model/Skill";
+import { ScrollView } from "react-native-gesture-handler";
 
 export type CategoryFilterItem = {
     label: string,
@@ -36,70 +37,68 @@ const Filters = ({data, onCategorySelection, onSkillSelection, selectedCategorie
     }
 
     return(
-        <ScrollView>
-            <View style={styles.scrollviewContainer}>
-                <View>
-                    <TouchableOpacity
-                        style={styles.filter}
-                        onPress={() => toggleFilterItem("Catégorie")}>
-                        <Text style={styles.filterTitle}>Catégorie</Text>
-                        <View style={styles.options}>
-                            <Text>{filterStatus["Catégorie"] ? "Voir moins" : "Voir plus"}</Text>
-                            <FontAwesome name={filterStatus["Catégorie"] ? "chevron-down" : "chevron-right"} size={16}/>
-                        </View>
-                    </TouchableOpacity>
-                    {filterStatus["Catégorie"] ? 
-                        <View style={styles.categoryListContainer}>
-                            {data?.map((item, index) => (
-                                <TouchableOpacity 
-                                    style={[
-                                        styles.categoryButton,
-                                        selectedCategories.includes(item.id) ? {backgroundColor: '#16A34A'}: {backgroundColor: '#DCDCDC'}
-                                    ]}
-                                    key={index}
-                                    onPress={() => onCategorySelection(item.id)}>
-                                    <Text style={[
-                                        selectedCategories.includes(item.id) ? {color: 'white'}: {color: 'black'}
-                                        ]}>
-                                            {item.categoryName}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                        : null
-                    }
-                    <TouchableOpacity
-                        style={styles.filter}
-                        onPress={() => toggleFilterItem("Compétence")}>
-                        <Text style={styles.filterTitle}>Compétence</Text>
-                        <View style={styles.options}>
-                            <Text>{filterStatus["Compétence"] ? "Voir moins" : "Voir plus"}</Text>
-                            <FontAwesome name={filterStatus["Compétence"] ? "chevron-down" : "chevron-right"} size={16}/>
-                        </View>
-                    </TouchableOpacity>
-                    {filterStatus["Compétence"] ? 
-                        <View style={styles.categoryListContainer}>
-                            {selectableSkills?.map((item, index) => (
-                                <TouchableOpacity 
-                                    style={[
-                                        styles.categoryButton,
-                                        selectedSkills.includes(item) ? {backgroundColor: '#16A34A'}: {backgroundColor: '#DCDCDC'}
-                                    ]}
-                                    key={index}
-                                    onPress={() => {
-                                        onSkillSelection(item)
-                                    }}>
-                                    <Text style={[
-                                        selectedSkills.includes(item) ? {color: 'white'}: {color: 'black'}
-                                        ]}>
-                                            {item.skillName}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                        : null
-                    }
-                </View>
+        <View style={styles.scrollviewContainer}>
+            <View>
+                <TouchableOpacity
+                    style={styles.filter}
+                    onPress={() => toggleFilterItem("Catégorie")}>
+                    <Text style={styles.filterTitle}>Catégorie</Text>
+                    <View style={styles.options}>
+                        <Text>{filterStatus["Catégorie"] ? "Voir moins" : "Voir plus"}</Text>
+                        <FontAwesome name={filterStatus["Catégorie"] ? "chevron-down" : "chevron-right"} size={16}/>
+                    </View>
+                </TouchableOpacity>
+                {filterStatus["Catégorie"] ? 
+                    <View style={styles.categoryListContainer}>
+                        {data?.map((item, index) => (
+                            <TouchableOpacity 
+                                style={[
+                                    styles.categoryButton,
+                                    selectedCategories.includes(item.id) ? {backgroundColor: '#16A34A'}: {backgroundColor: '#DCDCDC'}
+                                ]}
+                                key={index}
+                                onPress={() => onCategorySelection(item.id)}>
+                                <Text style={[
+                                    selectedCategories.includes(item.id) ? {color: 'white'}: {color: 'black'}
+                                    ]}>
+                                        {item.categoryName}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                    : null
+                }
+                <TouchableOpacity
+                    style={styles.filter}
+                    onPress={() => toggleFilterItem("Compétence")}>
+                    <Text style={styles.filterTitle}>Compétence</Text>
+                    <View style={styles.options}>
+                        <Text>{filterStatus["Compétence"] ? "Voir moins" : "Voir plus"}</Text>
+                        <FontAwesome name={filterStatus["Compétence"] ? "chevron-down" : "chevron-right"} size={16}/>
+                    </View>
+                </TouchableOpacity>
+                {filterStatus["Compétence"] ? 
+                    <View style={styles.categoryListContainer}>
+                        {selectableSkills?.map((item, index) => (
+                            <TouchableOpacity 
+                                style={[
+                                    styles.categoryButton,
+                                    selectedSkills.includes(item) ? {backgroundColor: '#16A34A'}: {backgroundColor: '#DCDCDC'}
+                                ]}
+                                key={index}
+                                onPress={() => {
+                                    onSkillSelection(item)
+                                }}>
+                                <Text style={[
+                                    selectedSkills.includes(item) ? {color: 'white'}: {color: 'black'}
+                                    ]}>
+                                        {item.skillName}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                    : null
+                }
             </View>
-        </ScrollView>
+        </View>
     )
 }
 

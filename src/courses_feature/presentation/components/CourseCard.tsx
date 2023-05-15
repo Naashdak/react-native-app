@@ -15,7 +15,7 @@ const CourseCard: FunctionComponent<Props> = (props) => {
             props.navigateToDetailsScreen(props.course)}
         >
             <View style={styles.card}>
-                <View style={{justifyContent: "center", alignItems: "center", flexDirection: "row"}}>
+                <View style={{justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
                 {props.course.user.picture ? 
                     <Image style={styles.iconContainer} source={{ uri: process.env.API_BASE + "/" + props.course.user.picture.url}}/>
                     : 
@@ -26,17 +26,23 @@ const CourseCard: FunctionComponent<Props> = (props) => {
                     <Text>{props.course.user?.username}</Text>
 
                 </View>
-                <View style={{justifyContent: "center", alignItems: "flex-start", width: "55%"}}>
+                <View style={{justifyContent: "center", alignItems: "flex-start", width: "65%", gap: 15}}>
                     <View style={{flexDirection: "row", gap: 5, alignItems: "center"}}>
-                        <FontAwesome name="map-marker" size={16} color={"#0f172a"} accessibilityLabel='ville' />
+                        <View style={styles.tinyIconContainer}>
+                            <FontAwesome name="map-marker" size={16} color={"#0f172a"} accessibilityLabel='ville' />
+                        </View>
                         <Text>{props.course.user?.city.cityName}</Text>
                     </View>
                     <View style={{flexDirection: "row", gap: 5, alignItems: "center"}}>
-                        <FontAwesome name="book" size={16} color={"#0f172a"} accessibilityLabel='compétence' />
+                        <View style={styles.tinyIconContainer}>
+                            <FontAwesome name="book" size={16} color={"#0f172a"} accessibilityLabel='compétence' />
+                        </View>
                         <Text>{props.course.skill.skillName}</Text>
                     </View>
                     <View style={{flexDirection: "row", gap: 5, alignItems: "center"}}>
-                        <FontAwesome name="star" size={16} color={"#0f172a"} accessibilityLabel='niveau' />
+                        <View style={styles.tinyIconContainer}>
+                            <FontAwesome name="star" size={16} color={"#0f172a"} accessibilityLabel='niveau' />
+                        </View>
                         <Text>{props.course.skillLevel}</Text>
                     </View>
                 </View>
@@ -67,6 +73,10 @@ const styles = StyleSheet.create({
         height: 60,
         alignItems: 'center',
         justifyContent: 'center'
-      },
+    },
+    tinyIconContainer: {
+        width: 16,
+        alignItems: "center"
+    }
   });
 export default CourseCard;

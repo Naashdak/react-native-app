@@ -5,7 +5,7 @@ import Animated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withSprin
 import RadioButton, { RadioButtonItem } from "./RadioButton"
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window')
-const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 704
+const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + SCREEN_HEIGHT*(80/100)
 
 type BottomSheetProps = {
     setSortByOption: (value: number) => void
