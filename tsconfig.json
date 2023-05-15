@@ -2,8 +2,8 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
-    "lib": ["es6", "dom", "es2017", "ES2019"],
-    "types": ["reflect-metadata"],
+    "lib": ["es6", "dom", "es2017", "ES2019", ],
+    "types": ["reflect-metadata", "node"],
     "module": "commonjs",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true

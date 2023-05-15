@@ -1,5 +1,6 @@
 import { injectable } from "inversify";
 import { IGeolocationApiService } from "../../domain/interfaces/IGeolocationApiService";
+import { GeolocationApiProperties } from "../../domain/model/GeolocationApiProperties";
 
 @injectable()
 export class GeolocationApiService implements IGeolocationApiService {
@@ -15,9 +16,8 @@ export class GeolocationApiService implements IGeolocationApiService {
                 throw new Error("Erreur")
             }
 
-            // TODO : todo
-            const json = await response.json() as any
-            return json.nom
+            const json = await response.json() as GeolocationApiProperties[]
+            return json[0].nom
             
         } catch (error: any) {
             return error.message;

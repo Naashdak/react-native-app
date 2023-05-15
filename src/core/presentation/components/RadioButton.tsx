@@ -27,7 +27,7 @@ const RadioButton = ({data, onSelect}: Props) => {
                     style={styles.radioButton}>
                         <Text style={styles.radioButtonText}>{item.label}</Text>
                         <View style={styles.radioContainer}>
-                            <View style={[styles.radioButtonIcon, userOption === item.value ? styles.selected : styles.unselected]} />
+                            <View style={[styles.radioButtonIcon, userOption === item.value ? styles.selected : null]} />
 
                         </View>
                 </TouchableOpacity>
@@ -36,18 +36,11 @@ const RadioButton = ({data, onSelect}: Props) => {
       })}
         </View>
     )
-    
 }
 
 const styles = StyleSheet.create({
     selected: {
         backgroundColor: "#16A34A"
-    },
-    unselected: {
-
-    },
-    option: {
-
     },
     radioButtonContainer: {
     },

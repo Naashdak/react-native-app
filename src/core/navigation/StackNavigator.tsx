@@ -12,14 +12,9 @@ const HomeStack = createNativeStackNavigator<StackNavigatorParamList>();
 const StackNavigator = () => {
   return (
     <GestureHandlerRootView style={{flex:1}}>
+      <StatusBar 
+        backgroundColor={"#0F172A"} />
       <HomeStack.Navigator>
-        {/* screenOptions={{
-          navigationBarColor: "#0F172A",
-            headerStyle: {
-              backgroundColor: "#0F172A"
-            },
-            headerTintColor: "white"
-        }}> */}
         <HomeStack.Screen
           name="Courses" 
           component={CoursesScreen} 
@@ -30,7 +25,6 @@ const StackNavigator = () => {
             },
             headerTintColor: "white"
           }}
-          
         />
         <HomeStack.Screen 
           name="Details" 
@@ -38,7 +32,7 @@ const StackNavigator = () => {
           initialParams={{}} 
           options={
             ({route}) => ({
-              title: route.params.course.user.username,
+              title: "",
               headerTransparent: true,
               headerTintColor: "white"
             })

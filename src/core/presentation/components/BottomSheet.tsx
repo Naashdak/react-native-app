@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useImperativeHandle, useState } from "react"
+import React, { useCallback, useImperativeHandle, useState } from "react"
 import { Dimensions, StyleSheet, View, Text} from 'react-native'
 import { Gesture, GestureDetector } from 'react-native-gesture-handler'
-import Animated, { Extrapolate, interpolate, useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
+import Animated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 import RadioButton, { RadioButtonItem } from "./RadioButton"
-// import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window')
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 704
@@ -78,7 +77,7 @@ const BottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>((pro
     const sortByItems = [
         {label: "Ville", value: 0},
         {label: "Utilisateur", value: 1},
-        {label: "Catégorie", value: 2}
+        {label: "Compétence", value: 2}
     ]
 
     return(

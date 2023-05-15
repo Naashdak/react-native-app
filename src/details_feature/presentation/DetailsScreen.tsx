@@ -1,26 +1,38 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import { Text, View, StyleSheet, Dimensions, TouchableHighlight } from "react-native";
+import { Text, View, StyleSheet, Dimensions, TouchableHighlight, Image } from "react-native";
 import { StackNavigatorParamList } from "../../core/navigation/StackNavigatorParamList";
 import { UserSkillsWithUserAndCityDTO } from "../../courses_feature/domain/model/UserSkillsWithUserAndCityDTO";
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { Rating, AirbnbRating } from 'react-native-ratings';
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { AirbnbRating } from 'react-native-ratings';
 
 type Props = NativeStackScreenProps<StackNavigatorParamList, 'Details'>
 const {height: SCREEN_HEIGHT} = Dimensions.get('window')
 
 function DetailsScreen({route, navigation}: Props) {
   const course: UserSkillsWithUserAndCityDTO = route.params.course;
+  const rating = (label: string) => {
+    switch(label){
+      case "Débutant":
+        return 1
+
+      case "Intermédiaire":
+        return 2
+
+      case "Expérimenté":
+        return 3
+
+      case "Expert":
+        return 4
+    }
+  }
   return (
     <View style={styles.container}>
       <LinearGradient
-        // Background Linear Gradient
         colors={['#0F172A', 'transparent']}
         style={styles.background}
       />
-      {/* <View style={styles.background} /> */}
       <View style={styles.courseDetails}>
         <View style={styles.header}>
           <View style={styles.informations}>
@@ -28,9 +40,14 @@ function DetailsScreen({route, navigation}: Props) {
             <Text style={styles.headerText}>{course.skillLevel}</Text>
           </View>
           <View style={{alignItems: 'center'}}>
-            <View style={styles.iconContainer}>
-              <FontAwesome name="user" size={50} color={"#0f172a"} />
-            </View>
+            {course.user.picture ? 
+              <Image style={styles.iconContainer} source={{ uri: process.env.API_BASE + "/" + course.user.picture.url}}/>
+              : 
+              <View style={styles.iconContainer}>
+                <FontAwesome name="user" size={50} color={"#0f172a"} />
+              </View>
+            }
+              
             <Text style={{fontSize: 20, color: 'white'}}>{course.user.username}</Text>
           </View>
         </View>
@@ -38,12 +55,11 @@ function DetailsScreen({route, navigation}: Props) {
           <AirbnbRating 
             ratingContainerStyle={{alignSelf: 'flex-start', marginTop: 10}}
             size={20} 
+            defaultRating={rating(course.skillLevel)}
+            count={4}
             isDisabled
             showRating={false}/>
-
         </View>
-        
-
       </View>
       
       <View style={styles.bottom}>
@@ -56,14 +72,12 @@ function DetailsScreen({route, navigation}: Props) {
               style={styles.buttonClickContainer}
               onPress={() => {}}>
                   <View style={styles.buttonContainer}>
-                      <FontAwesome name='send' size={26} color={'white'} />
+                      <FontAwesome name="send" size={20} color={"white"} />
                       <Text style={styles.buttonText}>Contacter</Text>
                   </View>
             </TouchableHighlight>
         </View>
       </View>
-        
-      
     </View>
   );
 }
@@ -84,7 +98,7 @@ const styles = StyleSheet.create({
     height: SCREEN_HEIGHT,
   },
   courseDetails: {
-    marginTop: 120,
+    marginTop: "20%",
     paddingHorizontal: 25,
     width: "100%"
   },
@@ -141,7 +155,8 @@ const styles = StyleSheet.create({
 buttonContainer: {
     flexDirection: 'row',
     borderRadius: 10,
-    height: 30
+    height: 30,
+    alignItems: 'center'
 },
 buttonIcon: {
 
@@ -155,7 +170,7 @@ buttonText: {
   bottom: {
     position: "absolute",
     bottom: 0,
-    height: SCREEN_HEIGHT / 1.35,
+    height: SCREEN_HEIGHT / 1.6,
     width: "100%",
     backgroundColor: "white",
     borderTopStartRadius: 50,

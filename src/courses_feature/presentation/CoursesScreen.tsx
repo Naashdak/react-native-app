@@ -2,7 +2,7 @@ import 'react-native-gesture-handler';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackNavigatorParamList } from "../../core/navigation/StackNavigatorParamList";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { SafeAreaView , Text, View, StyleSheet, FlatList, RefreshControl, Button, TouchableHighlight } from "react-native";
+import { SafeAreaView , Text, View, StyleSheet, RefreshControl, TouchableHighlight, ScrollView } from "react-native";
 import CourseCard from "./components/CourseCard";
 import {container} from "../../core/di/Inversify.config";
 import { ICourseService } from "../domain/ICourseService";
@@ -11,7 +11,6 @@ import React from "react";
 import { UserSkillsWithUserAndCityDTO } from "../domain/model/UserSkillsWithUserAndCityDTO";
 import * as Location from 'expo-location';
 import Slider from '@react-native-community/slider';
-import { ScrollView } from 'react-native-gesture-handler';
 import { ICityService } from '../../core/domain/interfaces/ICityService';
 import { IGeolocationService } from '../../core/domain/interfaces/IGeolocationService';
 import FontAwesome from '@expo/vector-icons/FontAwesome'
@@ -23,19 +22,40 @@ import { ICategoryService } from '../domain/ICategoryService';
 import { CategoriesWithSkillDTO } from '../../core/domain/model/CategoriesWithSkillsDTO';
 
 type Props = NativeStackScreenProps<StackNavigatorParamList, 'Courses'>
+const DEFAULT_LATITUDE = 49.1244253
+const DEFAULT_LONGITUDE = 2.4535435
+const DEFAULT_RADIUS = 10
 
 export function CoursesScreen({navigation, route}: Props){
     
+    //#region DI
     const courseService = container.get<ICourseService>(SERVICE_IDENTIFIER.COURSESERVICE);
     const cityService = container.get<ICityService>(SERVICE_IDENTIFIER.CITYSERVICE);
     const geolocationService = container.get<IGeolocationService>(SERVICE_IDENTIFIER.GEOLOCATIONSERVICE);
     const skillService = container.get<ISkillService>(SERVICE_IDENTIFIER.SKILLSERVICE);
     const categoryService = container.get<ICategoryService>(SERVICE_IDENTIFIER.CATEGORYSERVICE);
-    
+    //#endregion
 
-    const [courses, setCourses] = useState<UserSkillsWithUserAndCityDTO[]>([]);
+    //#region States
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>()
+
+    const [courses, setCourses] = useState<UserSkillsWithUserAndCityDTO[]>([]);
+    const [location, setLocation] = useState<Location.LocationObject>();
+    const [cities, setCities] = useState<string[]>()
+    const [categoriesWithSkills, setCategoriesWithSkills] = useState<CategoriesWithSkillDTO[]>([])
+
+    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
+    const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
+    const [selectableSkills, setSelectableSkills] = useState<Skill[]>([])
+    const [sortingOption, setSortingOption] = useState(0)
+
+    // range slider
+    const [radius, setRadius] = useState<number>()
+    const [labelRadius, setLabelRadius] = useState<number>(DEFAULT_RADIUS)
+    //#endregion
+
+    //#region Functions
     const navigateToDetailsScreen = (course: UserSkillsWithUserAndCityDTO): void => {
         navigation.navigate(
             "Details", 
@@ -43,10 +63,7 @@ export function CoursesScreen({navigation, route}: Props){
         )
     }
 
-    const [location, setLocation] = useState<Location.LocationObject>();
-    const [cities, setCities] = useState<string[]>()
-    const [categoriesWithSkills, setCategoriesWithSkills] = useState<CategoriesWithSkillDTO[]>([])
-
+    // Fill bottom sheet options
     const fetchCategoriesWithSkills = async () => {
         try {
             setCategoriesWithSkills(await categoryService.getCategoriesWithSkills())
@@ -55,37 +72,7 @@ export function CoursesScreen({navigation, route}: Props){
         }
     }
 
-    
-
-    // range slider
-    const [radius, setRadius] = useState<number>()
-    const [labelRadius, setLabelRadius] = useState<number>(10)
-
-    const ref = useRef<BottomSheetRefProps>(null)
-    const refFilters = useRef<FilterBottomSheetProps>(null)
-    const onPress = useCallback(() => {
-        const isActive = ref?.current?.isActive()
-        if(isActive){
-            ref?.current?.scrollTo(0)
-        } else {
-            ref?.current?.scrollTo(-125)
-        }
-    }, [])
-
-    const onPressFilters = useCallback(() => {
-        const isActive = refFilters?.current?.isActive()
-        if(isActive){
-            refFilters?.current?.scrollTo(0)
-        } else {
-            refFilters?.current?.scrollTo(-400)
-        }
-    }, [])
-
-    const onRefresh = React.useCallback(() => {
-        fetchData()
-      }, []);
-
-    const fetchData = async() => {
+    const fetchCourses = async() => {
         try {
             setLoading(true);
             const courses = await courseService.getCourses(cities!);
@@ -96,63 +83,44 @@ export function CoursesScreen({navigation, route}: Props){
             setLoading(false);
         }
     }
+    //#endregion
 
-    // Get geolocation
-    useEffect(() => {
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                setError('Permission to access location was denied');
-                setRadius(10)
-                return;
-            }
-            let location = await Location.getCurrentPositionAsync({});
-            setLocation(location);
-            setRadius(10)
-        })();
+    //#region UI
+    const onRefresh = React.useCallback(() => {
+        fetchCourses()
     }, []);
+    //#endregion
+    
+    //#region Handle option selection
 
-    useEffect(() => {
-        if(!radius){
-            return
+    // Sort By BottomSheet
+    const ref = useRef<BottomSheetRefProps>(null)
+    // Handle bottom sheet visibility
+    const onPressSort = useCallback(() => {
+        const isActive = ref?.current?.isActive()
+        if(isActive){
+            // Close
+            ref?.current?.scrollTo(0)
+        } else {
+            // Open
+            ref?.current?.scrollTo(-125)
         }
-        const getNearbyCities = async() => {
-            try {
-                const nearbyCities = await cityService
-                    .getNearbyCitiesWithinRadius(
-                        radius ?? 10,
-                        location ? location!.coords.latitude :49.1244253,
-                        location ? location!.coords.longitude: 2.4535435  
-                    )
-                if(nearbyCities.length == 0){
-                    const cityName = await geolocationService
-                        .getCityByCoordinates(
-                            location ? location!.coords.latitude :49.1244253,
-                            location ? location!.coords.longitude: 2.4535435
-                        )
-                    setCities([cityName])
-                }
-                setCities(nearbyCities)
-            } catch (error: any) {
-                setError(error.message)
-            }
+    }, [])
+
+    // Filter BottomSheet
+    const refFilters = useRef<FilterBottomSheetProps>(null)
+    // Handle bottom sheet visibility
+    const onPressFilters = useCallback(() => {
+        const isActive = refFilters?.current?.isActive()
+        if(isActive){
+            // Close
+            refFilters?.current?.scrollTo(0)
+        } else {
+            // Open
+            refFilters?.current?.scrollTo(-390)
         }
-        getNearbyCities()
-    }, [radius])
-
-    useEffect(() => {
-        fetchData()
-    }, [cities])
-
-    useEffect(() => {
-        fetchCategoriesWithSkills()
-    }, [refFilters.current?.isActive])
-
-    const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-    const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]);
-    const [selectableSkills, setSelectableSkills] = useState<Skill[]>([])
-
-
+    }, [])
+    
     const handleCategorySelection = (categoryId: number) => {
         // Check if the category is already selected
         const categoryIndex = selectedCategories.indexOf(categoryId);
@@ -161,11 +129,10 @@ export function CoursesScreen({navigation, route}: Props){
             // Category is not selected, add it to the selected categories
             setSelectedCategories([...selectedCategories, categoryId]);
             setSelectableSkills([...selectableSkills, ...categorySkills])
+            setSelectedSkills([...selectedSkills, ...categorySkills])
         } else {
             // Category is already selected, remove it from the selected categories
             setSelectedCategories(selectedCategories.filter((category) => category !== categoryId));
-
-            
             // Also remove any selected skills that belong to this category
             setSelectedSkills(selectedSkills.filter((skill) => {
                 const skillCategory = categoriesWithSkills.find((category) => category.skills.includes(skill))
@@ -180,13 +147,15 @@ export function CoursesScreen({navigation, route}: Props){
       
     const handleSkillSelection = (skill: Skill) => {
         if(selectedSkills.find((item) => item === skill)){
+            // Skill is already selected, remove it
             setSelectedSkills(selectedSkills.filter((item) => item !== skill))
         } else {
+            // Skill is not selected, add it
             setSelectedSkills([...selectedSkills, skill]);
         }
     };
 
-      const filteredResults = categoriesWithSkills.filter((result) => {
+    const filteredResults = categoriesWithSkills.filter((result) => {
         const categorySelected = selectedCategories.includes(result.id)
         if(!categorySelected){
             return false
@@ -196,114 +165,118 @@ export function CoursesScreen({navigation, route}: Props){
         }
 
         const skillsSelected = result.skills.some((skill) => selectedSkills.includes(skill))
-        
         return skillsSelected
-      })
+    })
 
+    //#endregion
 
-    const [sortingOption, setSortingOption] = useState(0)
+    //#region Use effects
+    // Get permission then geolocation
+    useEffect(() => {
+        (async () => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setError('Permission to access location was denied');
+                setRadius(10)
+                return;
+            }
+            let location = await Location.getCurrentPositionAsync({});
+            setLocation(location);
+            setRadius(10)
+        })();
+    }, []);
 
+    // Get nearbyCities when radius value changed
+    useEffect(() => {
+        if(!radius){
+            return
+        }
+        const getNearbyCities = async() => {
+            try {
+                const nearbyCities = await cityService
+                    .getNearbyCitiesWithinRadius(
+                        radius ?? DEFAULT_RADIUS,
+                        location ? location!.coords.latitude : DEFAULT_LATITUDE,
+                        location ? location!.coords.longitude: DEFAULT_LONGITUDE  
+                    )
+                // Handle case : Geocoding api can't find nearby cities
+                if(nearbyCities.length == 0){
+                    // Get city by location
+                    const cityName = await geolocationService
+                        .getCityByCoordinates(
+                            location ? location!.coords.latitude : DEFAULT_LATITUDE,
+                            location ? location!.coords.longitude: DEFAULT_LONGITUDE
+                        )
+                    setCities([cityName])
+                }else {
+                    setCities(nearbyCities)
+                }
+            } catch (error: any) {
+                setError(error.message)
+            }
+        }
+        getNearbyCities()
+    }, [radius])
+
+    useEffect(() => {
+        // When cities value changed, reload
+        fetchCourses()
+    }, [cities])
+
+    useEffect(() => {
+        fetchCategoriesWithSkills()
+    }, [])
+    //#endregion
+
+    // Sort and filter Courses according to the selected options
     const sortBy = (courses: UserSkillsWithUserAndCityDTO[], selectedOptions: CategoriesWithSkillDTO[]) => {
+        // List of skills id from selected categories
+        const listOfSkills = selectedOptions?.map((item) => item.skills).flat().map((skill) => skill.id)
+        // Selected skills id
+        const selectedSkillIds = selectedSkills?.map((item) => item.id)
 
         
-        console.log("options : ",selectedOptions)
-        const listOfSkills = selectedOptions?.map((item) => item.skills).flat()
-        // TODO : handle when several categories are selected with some with selected skills and other with not
-        const categories = selectedOptions.map((item) => item)
-        const selectedCategoriesWithoutSelectedSkill = listOfSkills.filter((item) => !selectedSkills.includes(item))
-        console.log("test jpp pls : ", selectedCategoriesWithoutSelectedSkill)
-        const skillsId = selectedSkills?.map((item) => item.id)
-        const test = listOfSkills?.map((item) => item.id)
-
-        const jpp = categoriesWithSkills.filter((category) => {
-            const categorySelected = selectedCategories.includes(category.id)
-            if(!categorySelected){
-                return false
-            }
-
-            const skillsSelected = selectableSkills.some((skill) => category.skills.includes(skill))
-            if(!skillsSelected){
-                return true
-            }
-            return skillsSelected
-        })
-
-        // const filter = categoriesWithSkills
-        // .filter((category) => {
-        //     return selectedCategories.includes(category.id)
-        // }).map((category) => {
-        //     const skillsnames = category.skills.map((skill) => skill.skillName)
-        //     const skills = category.skills.map((skill) => skill)
-        //     if(selectableSkills.some(skill => !skillsnames.includes(skill.skillName))){
-        //         selectedSkills.push(...skills)
-        //     }
-        //     return {categoryName: category.categoryName, id: category.id, skills: skills}
-        // })
-
-        // console.log("filters : ", filter)
-
-
-        // if categoy is selected
-        //   if selected skills dont have category's skill
-        //     return true
-        //   else 
-        //     return selected skills 
-
-        if(sortingOption === 0){
-            
+        if(sortingOption === 0){ // Sort by City
             return courses
                 .filter((item) => {
                     if(selectedCategories.length === 0){
                         return item
                     }
                     if(selectedSkills.length === 0){
-                        // console.log("selectedSkills.length = 0")
-                        return test.includes(item.skill.id)
+                        return listOfSkills.includes(item.skill.id)
                     }
-                    const truc = listOfSkills.some((item) => {
-                        console.log('item : ', item)
-                        const t = test.includes(item.id)
-                        console.log(t)
-                        return t
-                    })
-                    console.log(truc)
-                    // if(listOfSkills.some((item) => !test.includes(item.id))){
-                    //     return
-                    // }
-                    return skillsId.includes(item.skill.id)
+                    return selectedSkillIds.includes(item.skill.id)
                 })
                 .sort((a, b) => a.user.city.cityName.localeCompare(b.user.city.cityName))
-        } else if(sortingOption === 1){
+        } else if(sortingOption === 1){ // Sort by User
             return courses
                 .filter((item) => {
-                    console.log(selectedSkills.length)
                     if(selectedCategories.length === 0){
                         return item
                     }
                     if(selectedSkills.length === 0){
-                        return test.includes(item.skill.id)
+                        return listOfSkills.includes(item.skill.id)
                     }
-                    return skillsId.includes(item.skill.id)
+                    return selectedSkillIds.includes(item.skill.id)
                 })
                 .sort((a, b) => a.user.username.localeCompare(b.user.username))
-        } else if(sortingOption === 2){
+        } else if(sortingOption === 2){ // Sort by Skill
             return courses
                 .filter((item) => {
                     if(selectedCategories.length === 0){
                         return item
                     }
                     if(selectedSkills.length === 0){
-                        return test.includes(item.skill.id)
+                        return listOfSkills.includes(item.skill.id)
                     }
-                    return skillsId.includes(item.skill.id)
+                    return selectedSkillIds.includes(item.skill.id)
                 })
                 .sort((a, b) => a.skill.skillName.localeCompare(b.skill.skillName))
         }
     }
 
     return(
-        <SafeAreaView style={styles.container}>
-            {/* <View style={styles.header} /> */}
+        <SafeAreaView style={{flex: 1}}>
             <View style={styles.slider}>
                 <Text style={styles.sliderText}>Rayon : {labelRadius}km</Text>
                 <Slider
@@ -326,7 +299,7 @@ export function CoursesScreen({navigation, route}: Props){
             <View style={styles.filters}>
                 <TouchableHighlight
                     style={styles.buttonClickContainer}
-                    onPress={onPress}>
+                    onPress={onPressSort}>
                         <View style={styles.buttonContainer}>
                             <FontAwesome name='sort' size={26} color={'white'} />
                             <Text style={styles.buttonText}>Trier par</Text>
@@ -344,15 +317,13 @@ export function CoursesScreen({navigation, route}: Props){
                 </TouchableHighlight>
             </View>
 
-            
             <ScrollView style={styles.list}
-                //TODO : issue with scroll  
                 refreshControl={
                     <RefreshControl refreshing={loading} onRefresh={onRefresh} />
                 }>
-                {sortBy(courses, filteredResults)?.map((course: UserSkillsWithUserAndCityDTO, index: number) => (
+                {courses.length > 0 ? sortBy(courses, filteredResults)?.map((course: UserSkillsWithUserAndCityDTO, index: number) => (
                     <CourseCard key={index} course={course} navigateToDetailsScreen={navigateToDetailsScreen}/>
-                ))}
+                )): <Text style={{alignSelf: 'center'}}>Erreur : {error}</Text>}
                 
             </ScrollView>
             <BottomSheet ref={ref} setSortByOption={setSortingOption} />
@@ -372,9 +343,6 @@ const styles = StyleSheet.create({
     header:{
         height: 100,
         backgroundColor: 'white'
-
-    },
-    container: {
     },
     slider: {
         flexDirection: 'row',
@@ -419,6 +387,6 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     list: {
-        height: '82%'
+        height: '80%'
     }
 })

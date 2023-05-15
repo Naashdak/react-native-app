@@ -38,11 +38,6 @@ const Filters = ({data, onCategorySelection, onSkillSelection, selectedCategorie
     return(
         <ScrollView>
             <View style={styles.scrollviewContainer}>
-                <TouchableOpacity
-                    style={styles.resetButton}
-                    onPress={() => {}}>
-                    <Text>Reset</Text>
-                </TouchableOpacity>
                 <View>
                     <TouchableOpacity
                         style={styles.filter}

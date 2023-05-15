@@ -1,6 +1,6 @@
 import React, { useCallback, useImperativeHandle } from "react"
 import { Dimensions, StyleSheet, View} from 'react-native'
-import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+import { Gesture, GestureDetector, ScrollView } from 'react-native-gesture-handler'
 import Animated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated'
 import Filters from "./Filters"
 import { Skill } from "../../../core/domain/model/Skill"
@@ -8,7 +8,7 @@ import { CategoriesWithSkillDTO } from "../../../core/domain/model/CategoriesWit
 
 
 const {height: SCREEN_HEIGHT} = Dimensions.get('window')
-const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 428
+const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 390
 
 export type FilterBottomSheetProps = {
     scrollTo: (destination: number) => void
@@ -93,13 +93,16 @@ const FilterBottomSheet = React.forwardRef<FilterBottomSheetProps, Props>((props
             <Animated.View style={[styles.bottomSheetContainer, rBottomSheetStyle]}>
                 <View style={styles.line} />
                 <View style={styles.filterContainer}>
-                    <Filters 
-                        data={props.categories} 
-                        onCategorySelection={props.handleCategorySelection} 
-                        onSkillSelection={props.handleSkillSelection} 
-                        selectedCategories={props.selectedCategories}
-                        selectedSkills={props.selectedSkills}
-                        selectableSkills={props.selectableSkills}/>
+                    <ScrollView style={{height: SCREEN_HEIGHT/ 1.2}}>
+                        <Filters 
+                            data={props.categories} 
+                            onCategorySelection={props.handleCategorySelection} 
+                            onSkillSelection={props.handleSkillSelection} 
+                            selectedCategories={props.selectedCategories}
+                            selectedSkills={props.selectedSkills}
+                            selectableSkills={props.selectableSkills}/>
+                    </ScrollView>
+                    
                 </View>
             </Animated.View>
         </GestureDetector>
