@@ -19,8 +19,8 @@ npm install
 
 Il faut ensuite créer un fichier .env, ajouter les variables d'environnement et leurs valeurs associées : 
 
-  - OPENWEATHERMAP_APIKEY={API_KEY}
-  - STRAPI_BEARER_TOKEN={BEARER_TOKEN}
+  - API_BASE={API_KEY}
+  - BEARER_TOKEN={BEARER_TOKEN}
 
 Pour lancer le projet : 
 ```bash
@@ -28,6 +28,34 @@ npx expo start
 ```
 
 Vous pouvez scanner le QRCode avec l'application ExpoGo préalablement télécharger sur votre téléphone
+
+## Déploiement
+Ce projet a été réalisé via Expo et EAS cli.
+
+Installation eas cli : 
+```bash
+npm install -g eas-cli
+```
+
+Connexion à votre compte Expo : 
+```bash
+eas login
+```
+
+Configurer le projet expo : 
+```bash
+eas build:configure
+```
+
+Inclure les variables d'environnement au build :
+```bash
+eas secret:push --scope project --env-file .env
+``` 
+
+Déploiement : 
+```bash
+eas build
+``` 
 
 ## Architecture
 
