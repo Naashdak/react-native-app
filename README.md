@@ -31,7 +31,7 @@ Vous pouvez scanner le QRCode avec l'application ExpoGo préalablement télécha
 
 ## Architecture
 
-    Le project est organisé par fonctionnalités et chacune peu comporter différents dossiers
+    Le project est organisé par fonctionnalités et chacune peut comporter différents dossiers
 
     feature: 
     |___ domain: logique métier
@@ -49,6 +49,10 @@ Vous pouvez scanner le QRCode avec l'application ExpoGo préalablement télécha
     |___ data: Données
     |    |___ api: Services HTTP
     |    |___ local: Base de données interne
+    |
+    |___ domain: logique métier commune
+    |    |___ model: Entités et types
+    |    |___ services: Services métiers
     |
     |___ di: Injection de dépendance
     |    |___ inversify.config.ts: Enregistrer les services et rendre leurs instances disponibles
