@@ -43,7 +43,7 @@ Vous pouvez scanner le QRCode avec l'application ExpoGo préalablement télécha
          |___ FeatureScreen.tsx: Ecran de la fonctionnalité
 
 
-    Cas spécifique du dossier core qui gèrent les besoins en communs de l'application et les éléments qui peuvent être réutiliser par plusieurs fonctionnalités
+    Cas spécifique du dossier core qui gère les besoins en commun de l'application et les éléments qui peuvent être réutilisés par plusieurs fonctionnalités
 
     core:
     |___ data: Données
