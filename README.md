@@ -31,7 +31,7 @@ Vous pouvez scanner le QRCode avec l'application ExpoGo préalablement télécha
 
 ## Architecture
 
-    Le project est organisé par fonctionnalités et chacune peut comporter différents dossiers
+    Le projet est organisé par fonctionnalités et chacune peut comporter différents dossiers
 
     feature: 
     |___ domain: logique métier
