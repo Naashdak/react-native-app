@@ -19,6 +19,7 @@ eas-build:
     - apk add --no-cache bash
     # - npx expo login -u $EXPO_USERNAME -p $EXPO_TOKEN
     - EAS_NO_VCS=1 npx eas-cli build -p android --non-interactive --profile preview
+    - ls
   artifacts:
     paths:
-      - /home/expo/workingdir/build/android/app/build/outputs/apk/release/app-release.apk
+      - build/android/app/build/outputs/apk/release/app-release.apk
