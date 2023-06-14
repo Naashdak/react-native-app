@@ -19,8 +19,8 @@ npm install
 
 Il faut ensuite créer un fichier .env, ajouter les variables d'environnement et leurs valeurs associées : 
 
-  - OPENWEATHERMAP_APIKEY={API_KEY}
-  - STRAPI_BEARER_TOKEN={BEARER_TOKEN}
+  - API_BASE={API_KEY}
+  - BEARER_TOKEN={BEARER_TOKEN}
 
 Pour lancer le projet : 
 ```bash
