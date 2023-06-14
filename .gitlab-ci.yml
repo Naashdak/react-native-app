@@ -1,6 +1,7 @@
 variables:
   USERNAME: $EXPO_USERNAME
   TOKEN: $EXPO_TOKEN
+  TEST: "coucou"
 image: node:alpine
 
 cache:
@@ -20,6 +21,7 @@ eas-build:
   stage: build
   script:
     - apk add --no-cache bash
-    - echo $USERNAME
+    - echo "$USERNAME"
+    - echo "Hello test $TEST"
     - npx expo login -u $USERNAME -p $TOKEN
     - EAS_NO_VCS=1 npx eas-cli build -p android --profile preview
