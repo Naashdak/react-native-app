@@ -17,5 +17,5 @@ eas-build:
   stage: build
   script:
     - apk add --no-cache bash
-    - npx expo login -u $EXPO _USERNAME-p $EXPO_TOKEN
+    - npx expo login -u $EXPO_USERNAME-p $EXPO_TOKEN
     - EAS_NO_VCS=1 npx eas-cli build -p android --profile preview
