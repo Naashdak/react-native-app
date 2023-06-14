@@ -29,9 +29,37 @@ npx expo start
 
 Vous pouvez scanner le QRCode avec l'application ExpoGo préalablement télécharger sur votre téléphone
 
+## Déploiement
+Ce projet a été réalisé via Expo et EAS cli.
+
+Installation eas cli : 
+```bash
+npm install -g eas-cli
+```
+
+Connexion à votre compte Expo : 
+```bash
+eas login
+```
+
+Configurer le projet expo : 
+```bash
+eas build:configure
+```
+
+Inclure les variables d'environnement au build :
+```bash
+eas secret:push --scope project --env-file .env
+``` 
+
+Déploiement : 
+```bash
+eas build
+``` 
+
 ## Architecture
 
-    Le project est organisé par fonctionnalités et chacune peu comporter différents dossiers
+    Le projet est organisé par fonctionnalités et chacune peut comporter différents dossiers
 
     feature: 
     |___ domain: logique métier
@@ -43,12 +71,16 @@ Vous pouvez scanner le QRCode avec l'application ExpoGo préalablement télécha
          |___ FeatureScreen.tsx: Ecran de la fonctionnalité
 
 
-    Cas spécifique du dossier core qui gèrent les besoins en communs de l'application et les éléments qui peuvent être réutiliser par plusieurs fonctionnalités
+    Cas spécifique du dossier core qui gère les besoins en commun de l'application et les éléments qui peuvent être réutilisés par plusieurs fonctionnalités
 
     core:
     |___ data: Données
     |    |___ api: Services HTTP
     |    |___ local: Base de données interne
+    |
+    |___ domain: logique métier commune
+    |    |___ model: Entités et types
+    |    |___ services: Services métiers
     |
     |___ di: Injection de dépendance
     |    |___ inversify.config.ts: Enregistrer les services et rendre leurs instances disponibles
