@@ -21,4 +21,4 @@ eas-build:
     - EAS_NO_VCS=1 npx eas-cli build -p android --non-interactive --profile preview
   artifacts:
     paths:
-      - /home/expo/workingdir/build/android/app/build/outputs/apk/release/app-release.apk 
+      - ./android/app/build/outputs/apk/release/app-release.apk
