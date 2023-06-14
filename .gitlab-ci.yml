@@ -23,5 +23,5 @@ eas-build:
   stage: build
   script:
     - apk add --no-cache bash
-    - npx expo login -u $USERNAME -p $TOKEN
+    - npx expo login -u "$USERNAME" -p "$TOKEN"
     - npx eas-cli build --platform all --non-interactive
