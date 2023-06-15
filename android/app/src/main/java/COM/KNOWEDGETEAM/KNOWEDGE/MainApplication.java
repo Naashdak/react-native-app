@@ -1,4 +1,4 @@
-package com.knowedge;
+package COM.KNOWEDGETEAM.KNOWEDGE;
 
 import android.app.Application;
 import android.content.res.Configuration;

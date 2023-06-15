@@ -1,4 +1,4 @@
-package com.knowedge;
+package COM.KNOWEDGETEAM.KNOWEDGE;
 
 import android.os.Build;
 import android.os.Bundle;

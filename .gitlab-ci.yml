@@ -22,4 +22,4 @@ eas-build:
     - ls
   artifacts:
     paths:
-      - build/android/app/build/outputs/apk/release/app-release.apk
+      - ./android/app/build/outputs/apk/release/app-release.apk

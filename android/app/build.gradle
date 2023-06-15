@@ -113,13 +113,13 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.knowedge"
+    namespace 'COM.KNOWEDGETEAM.KNOWEDGE'
     defaultConfig {
-        applicationId "com.knowedge"
+        applicationId 'COM.KNOWEDGETEAM.KNOWEDGE'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 100000
+        versionName "1.0.0"
     }
 
     splits {
